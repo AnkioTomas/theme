@@ -40,6 +40,7 @@ import kotlinx.coroutines.delay
 import net.ankio.theme.AnkioTheme
 import net.ankio.theme.compat.ThemeIcon
 import net.ankio.theme.compat.ThemeIconButton
+import net.ankio.theme.compat.ThemeFloatingNavBarMode
 import net.ankio.theme.compat.ThemeNavigationBar
 import net.ankio.theme.compat.ThemeNavigationBarItem
 import net.ankio.theme.compat.ThemeNavigationRail
@@ -109,6 +110,32 @@ internal fun NavigationSection() {
                     icon = icon,
                     label = label,
                 )
+            }
+        }
+
+        Caption("ThemeNavigationBar · floating 悬浮模式（Miuix 用 FloatingNavigationBar，Material 模拟胶囊）")
+        var floatingIndex by remember { mutableIntStateOf(0) }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(96.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(AnkioTheme.colorScheme.surfaceContainer),
+            contentAlignment = Alignment.Center,
+        ) {
+            ThemeNavigationBar(
+                modifier = Modifier.fillMaxWidth(),
+                floating = true,
+                mode = ThemeFloatingNavBarMode.IconAndText,
+            ) {
+                items.forEachIndexed { index, (label, icon) ->
+                    ThemeNavigationBarItem(
+                        selected = floatingIndex == index,
+                        onClick = { floatingIndex = index },
+                        icon = icon,
+                        label = label,
+                    )
+                }
             }
         }
 

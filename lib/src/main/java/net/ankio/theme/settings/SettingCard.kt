@@ -31,12 +31,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import net.ankio.theme.AnkioTheme
 import net.ankio.theme.compat.ThemeCard
 import net.ankio.theme.compat.ThemeText
 
-/** 卡片在分组中的位置，用于控制圆角 */
+/** 卡片在分组中的位置，用于控制圆角与上下间距 */
 enum class SettingCardPosition {
     First, Middle, Last, Single
 }
@@ -59,6 +60,17 @@ internal fun SettingCardPosition.toShape(): Shape = when (this) {
     )
 
     SettingCardPosition.Single -> RoundedCornerShape(12.dp)
+}
+
+/**
+ * 分组内卡片的上下间距：First 顶部贴上一项、Last 底部贴下一项，Middle 两侧都留 3dp，
+ * Single 上下都留 3dp。所有 Selector 共用此规则避免出现各自 hardcode padding。
+ */
+internal fun SettingCardPosition.toVerticalPadding(): Pair<Dp, Dp> = when (this) {
+    SettingCardPosition.First -> 0.dp to 3.dp
+    SettingCardPosition.Middle -> 3.dp to 3.dp
+    SettingCardPosition.Last -> 3.dp to 0.dp
+    SettingCardPosition.Single -> 3.dp to 3.dp
 }
 
 /**
@@ -85,12 +97,7 @@ internal fun SettingCard(
     trailingValue: String? = null,
     position: SettingCardPosition = SettingCardPosition.Single,
 ) {
-    val (topPad, bottomPad) = when (position) {
-        SettingCardPosition.First -> 0.dp to 3.dp
-        SettingCardPosition.Middle -> 3.dp to 3.dp
-        SettingCardPosition.Last -> 3.dp to 0.dp
-        SettingCardPosition.Single -> 3.dp to 3.dp
-    }
+    val (topPad, bottomPad) = position.toVerticalPadding()
     ThemeCard(
         modifier = modifier
             .fillMaxWidth()

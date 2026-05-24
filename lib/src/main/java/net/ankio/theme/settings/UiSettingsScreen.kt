@@ -41,6 +41,7 @@ import net.ankio.theme.ThemePreviewConfig
 import net.ankio.theme.ThemePreviewParameterProvider
 import net.ankio.theme.ThemeSettings
 import net.ankio.theme.R
+import net.ankio.theme.UiMode
 import net.ankio.theme.themeKeyOptions
 
 /**
@@ -113,6 +114,13 @@ fun UiSettingsScreen(
     val uiModeEntries = options.uiModeEntries.takeIf { it.isNotEmpty() } ?: defaultUiModeEntries()
     val colorModeEntries = options.colorModeEntries.takeIf { it.isNotEmpty() } ?: defaultColorModeEntries()
 
+    // 「主题色」分组仅在颜色源真正参与渲染时显示：
+    // - Material UI 引擎：始终用 keyColor（动态色或种子色），始终显示
+    // - Miuix UI 引擎：仅 colorMode 是 Monet* 时使用 keyColor，其它模式（默认调色板）下隐藏，
+    //   避免向用户暴露「选了不生效」的设置项
+    val showThemeColorSection = UiMode.fromValue(uiMode) == UiMode.Material ||
+            ColorMode.fromValue(colorMode).isMonet
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -129,8 +137,8 @@ fun UiSettingsScreen(
                 onThemeChanged()
             },
             entries = uiModeEntries,
+            position = SettingCardPosition.First,
         )
-
         ColorModeSelector(
             value = colorMode,
             onValueChange = {
@@ -139,30 +147,34 @@ fun UiSettingsScreen(
                 onThemeChanged()
             },
             entries = colorModeEntries,
+            position = SettingCardPosition.Last,
         )
 
-        FollowSystemAccentSwitch(
-            checked = followSystemAccent,
-            onCheckedChange = {
-                followSystemAccent = it
-                ThemeSettings.followSystemAccent = it
-                onThemeChanged()
-            },
-        )
-
-        SectionHeader(text = stringResource(R.string.theme_section_color))
-        ThemeColorSelector(
-            value = themeColor,
-            onValueChange = {
-                themeColor = it
-                ThemeSettings.themeColor = it
-                followSystemAccent = false
-                onThemeChanged()
-            },
-            entries = options.themeColorEntries,
-            themeKeyOptions = themeKeyOptions,
-            onThemeChanged = onThemeChanged,
-        )
+        if (showThemeColorSection) {
+            SectionHeader(text = stringResource(R.string.theme_section_color))
+            FollowSystemAccentSwitch(
+                checked = followSystemAccent,
+                onCheckedChange = {
+                    followSystemAccent = it
+                    ThemeSettings.followSystemAccent = it
+                    onThemeChanged()
+                },
+                position = SettingCardPosition.First,
+            )
+            ThemeColorSelector(
+                value = themeColor,
+                onValueChange = {
+                    themeColor = it
+                    ThemeSettings.themeColor = it
+                    followSystemAccent = false
+                    onThemeChanged()
+                },
+                entries = options.themeColorEntries,
+                themeKeyOptions = themeKeyOptions,
+                onThemeChanged = onThemeChanged,
+                position = SettingCardPosition.Last,
+            )
+        }
 
         Spacer(Modifier.height(4.dp))
     }

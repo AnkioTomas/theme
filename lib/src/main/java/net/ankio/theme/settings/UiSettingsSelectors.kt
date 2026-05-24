@@ -60,15 +60,17 @@ internal fun SectionHeader(
     )
 }
 
-/** UI 引擎选择：主题风格分区下的下拉 */
+/** UI 引擎选择 */
 @Composable
 internal fun UiModeSelector(
     value: String,
     onValueChange: (String) -> Unit,
     entries: List<Pair<String, String>>,
+    position: SettingCardPosition = SettingCardPosition.Single,
 ) {
     val items = entries.map { it.second }
     val selectedIndex = entries.indexOfFirst { it.first == value }.coerceIn(0, items.size - 1)
+    val (topPad, bottomPad) = position.toVerticalPadding()
 
     ThemeSuperDropdown(
         items = items,
@@ -83,10 +85,10 @@ internal fun UiModeSelector(
                 tint = AnkioTheme.colorScheme.primary,
             )
         },
-        shape = SettingCardPosition.First.toShape(),
+        shape = position.toShape(),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 3.dp),
+            .padding(top = topPad, bottom = bottomPad),
     )
 }
 
@@ -96,9 +98,11 @@ internal fun ColorModeSelector(
     value: Int,
     onValueChange: (Int) -> Unit,
     entries: List<Pair<Int, String>>,
+    position: SettingCardPosition = SettingCardPosition.Single,
 ) {
     val items = entries.map { it.second }
     val selectedIndex = entries.indexOfFirst { it.first == value }.coerceIn(0, items.size - 1)
+    val (topPad, bottomPad) = position.toVerticalPadding()
 
     ThemeSuperDropdown(
         items = items,
@@ -113,10 +117,10 @@ internal fun ColorModeSelector(
                 tint = AnkioTheme.colorScheme.primary,
             )
         },
-        shape = SettingCardPosition.Middle.toShape(),
+        shape = position.toShape(),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 3.dp),
+            .padding(top = topPad, bottom = bottomPad),
     )
 }
 
@@ -125,6 +129,7 @@ internal fun ColorModeSelector(
 internal fun FollowSystemAccentSwitch(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
+    position: SettingCardPosition = SettingCardPosition.Single,
 ) {
     SettingCard(
         icon = {
@@ -143,7 +148,7 @@ internal fun FollowSystemAccentSwitch(
                 onCheckedChange = onCheckedChange,
             )
         },
-        position = SettingCardPosition.Last,
+        position = position,
     )
 }
 
@@ -155,6 +160,7 @@ internal fun ThemeColorSelector(
     entries: List<Pair<String, String>>,
     themeKeyOptions: List<String>,
     onThemeChanged: () -> Unit,
+    position: SettingCardPosition = SettingCardPosition.Single,
 ) {
     val keyLabels = if (entries.isEmpty()) {
         themeKeyOptions.associateWith { key ->
@@ -182,6 +188,7 @@ internal fun ThemeColorSelector(
         )
     }
     val selectedIndex = themeKeyOptions.indexOf(value).coerceIn(0, items.size - 1)
+    val (topPad, bottomPad) = position.toVerticalPadding()
 
     ThemeSuperSpinner(
         items = items,
@@ -199,9 +206,9 @@ internal fun ThemeColorSelector(
                 tint = AnkioTheme.colorScheme.primary,
             )
         },
-        shape = SettingCardPosition.Single.toShape(),
+        shape = position.toShape(),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 3.dp),
+            .padding(top = topPad, bottom = bottomPad),
     )
 }

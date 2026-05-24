@@ -107,7 +107,18 @@ private fun MaterialBlock(
     )
 }
 
-/** Miuix 主题包装层，仅负责套一层 [MiuixTheme]，由内部 [MaterialBlock] 提供 Material API。 */
+/**
+ * Miuix 主题包装层，仅负责套一层 [MiuixTheme]，由内部 [MaterialBlock] 提供 Material API。
+ *
+ * Miuix 的 [ColorSchemeMode.System]/[Light]/[Dark] 使用 Miuix 内置默认调色板（米家风格），
+ * 完全忽略 keyColor；只有 [ColorSchemeMode.MonetSystem]/[MonetLight]/[MonetDark] 会应用
+ * keyColor 生成动态色。两套语义都对用户暴露：
+ * - 想要 Miuix 原汁原味 → 选 SYSTEM/LIGHT/DARK
+ * - 想要跟随系统/自选种子色 → 选 MONET_*
+ *
+ * 设置页 (UiSettingsScreen) 仅在 `colorMode.isMonet || uiMode == Material` 时显示
+ * "动态颜色 / 主题色" 选项，避免在 Miuix 默认模式下显示无效配置。
+ */
 @Composable
 private fun MiuixWrapped(
     appSettings: AppSettings,

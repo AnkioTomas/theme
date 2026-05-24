@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -125,6 +126,8 @@ fun PreviewAllThemes(
     config: ThemePreviewConfig,
     content: @Composable () -> Unit
 ) {
+    val ctx = LocalContext.current
+    ThemeSettings.init(ctx)
     val baseConfig = LocalConfiguration.current
     val overrideConfig = Configuration(baseConfig).apply {
         uiMode = if (config.darkConfig) Configuration.UI_MODE_NIGHT_YES

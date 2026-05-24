@@ -62,7 +62,7 @@ internal fun SettingCardPosition.toShape(): Shape = when (this) {
 }
 
 /**
- * 通用设置项卡片：左侧图标、标题、副标题、右侧 Switch/下拉值、底部可选滑块。
+ * 通用设置项卡片：左侧图标、标题、副标题、右侧 Switch/下拉值。
  * 供 UI 引擎、主题模式、动态颜色等设置项复用。
  *
  * @param icon 左侧 40dp 图标
@@ -72,7 +72,6 @@ internal fun SettingCardPosition.toShape(): Shape = when (this) {
  * @param onClick 点击回调，null 时卡片不可点击
  * @param trailing 右侧控件（如 Switch），与 trailingValue 二选一
  * @param trailingValue 下拉时右侧显示的值，与 trailing 二选一
- * @param bottomSlider 底部数字滑块，可选
  * @param position 分组位置，Single 时独立圆角+间距，First/Middle/Last 时连在一起
  */
 @Composable
@@ -84,7 +83,6 @@ internal fun SettingCard(
     onClick: (() -> Unit)? = null,
     trailing: @Composable (() -> Unit)? = null,
     trailingValue: String? = null,
-    bottomSlider: @Composable (() -> Unit)? = null,
     position: SettingCardPosition = SettingCardPosition.Single,
 ) {
     val (topPad, bottomPad) = when (position) {
@@ -148,10 +146,6 @@ internal fun SettingCard(
                         )
                     }
                 }
-            }
-            if (bottomSlider != null) {
-                Spacer(Modifier.height(12.dp))
-                bottomSlider()
             }
         }
     }

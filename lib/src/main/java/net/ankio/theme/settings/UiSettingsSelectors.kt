@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material.icons.filled.Percent
 import androidx.compose.material.icons.filled.Style
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.Icon
@@ -37,7 +36,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import net.ankio.theme.AnkioTheme
 import net.ankio.theme.R
-import net.ankio.theme.compat.ThemeSlider
 import net.ankio.theme.compat.ThemeSuperDropdown
 import net.ankio.theme.compat.ThemeSuperSpinner
 import net.ankio.theme.compat.ThemeSwitch
@@ -201,47 +199,3 @@ internal fun ThemeColorSelector(
             .padding(vertical = 3.dp),
     )
 }
-
-/** 页面显示百分比滑块：70-120%，步长 10 */
-@Composable
-internal fun DisplayPercentageSlider(
-    value: Int,
-    onValueChange: (Int) -> Unit,
-    onThemeChanged: () -> Unit,
-) {
-    SectionHeader(text = stringResource(R.string.theme_section_display))
-    SettingCard(
-        icon = {
-            Icon(
-                imageVector = Icons.Filled.Percent,
-                contentDescription = null,
-                tint = AnkioTheme.colorScheme.primary,
-            )
-        },
-        title = stringResource(R.string.theme_display_percentage),
-        subtitle = stringResource(R.string.theme_display_percentage_summary),
-        onClick = null,
-        trailing = {
-            ThemeText(
-                text = "$value%",
-                style = AnkioTheme.textStyles.footnote1,
-                color = AnkioTheme.colorScheme.onSurfaceVariant,
-            )
-        },
-        bottomSlider = {
-            ThemeSlider(
-                value = value.toFloat(),
-                onValueChange = {
-                    val v = it.toInt().coerceIn(70, 120)
-                    onValueChange(v)
-                    onThemeChanged()
-                },
-                modifier = Modifier.fillMaxWidth(),
-                valueRange = 70f..120f,
-                steps = 5,
-            )
-        },
-        position = SettingCardPosition.Single,
-    )
-}
-

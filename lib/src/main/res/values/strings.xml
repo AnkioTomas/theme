@@ -2,7 +2,6 @@
 <resources>
     <string name="theme_section_style">Theme Style</string>
     <string name="theme_section_color">Theme Color</string>
-    <string name="theme_section_display">Display</string>
     <string name="theme_ui_style">UI Engine</string>
     <string name="theme_ui_style_summary">Choose Miuix or Material interface</string>
     <string name="theme_color_mode">Theme Mode</string>
@@ -11,8 +10,6 @@
     <string name="theme_theme_color_summary">Choose app accent color</string>
     <string name="theme_follow_system_accent">Dynamic Colors</string>
     <string name="theme_follow_system_accent_summary">Theme colors based on wallpaper</string>
-    <string name="theme_display_percentage">Page Display Scale</string>
-    <string name="theme_display_percentage_summary">Control page display effect</string>
     <string name="theme_dialog_close">Close</string>
 
     <string name="theme_color_default">Default</string>

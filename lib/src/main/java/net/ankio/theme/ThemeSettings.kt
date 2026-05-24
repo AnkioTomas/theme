@@ -37,11 +37,9 @@ object ThemeSettings {
     private const val KEY_COLOR_MODE = "color_mode"
     private const val KEY_FOLLOW_SYSTEM_ACCENT = "follow_system_accent"
     private const val KEY_THEME_COLOR = "theme_color"
-    private const val KEY_DISPLAY_PERCENTAGE = "display_percentage"
 
     private const val DEFAULT_UI_MODE = "miuix"
     private const val DEFAULT_THEME_COLOR = "MATERIAL_DEFAULT"
-    private const val DEFAULT_DISPLAY_PERCENTAGE = 100
 
     private lateinit var appContext: Context
     private lateinit var pref: SharedPreferences
@@ -74,16 +72,17 @@ object ThemeSettings {
         get() = requirePref().getBoolean(KEY_FOLLOW_SYSTEM_ACCENT, true)
         set(value) = requirePref().edit { putBoolean(KEY_FOLLOW_SYSTEM_ACCENT, value) }
 
-    /** 主题色标识（如 MATERIAL_DEFAULT） */
+    /**
+     * 主题色标识（如 MATERIAL_DEFAULT）。
+     * 设置时自动关闭 [followSystemAccent]：用户主动选具体色 = 不再跟随系统强调色。
+     * 消除两个状态的特殊情况，避免"选了不生效"。
+     */
     var themeColor: String
         get() = requirePref().getString(KEY_THEME_COLOR, DEFAULT_THEME_COLOR) ?: DEFAULT_THEME_COLOR
-        set(value) = requirePref().edit { putString(KEY_THEME_COLOR, value) }
-
-    /** 页面显示百分比 70-120，控制页面显示效果 */
-    var displayPercentage: Int
-        get() = requirePref().getInt(KEY_DISPLAY_PERCENTAGE, DEFAULT_DISPLAY_PERCENTAGE)
-            .coerceIn(70, 120)
-        set(value) = requirePref().edit { putInt(KEY_DISPLAY_PERCENTAGE, value.coerceIn(70, 120)) }
+        set(value) = requirePref().edit {
+            putString(KEY_THEME_COLOR, value)
+            putBoolean(KEY_FOLLOW_SYSTEM_ACCENT, false)
+        }
 
     /** 当前 ColorMode 枚举值 */
     private val currentColorMode: ColorMode get() = ColorMode.fromValue(colorMode)

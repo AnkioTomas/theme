@@ -16,12 +16,14 @@
 package net.ankio.theme.compat
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
@@ -33,15 +35,15 @@ import top.yukonga.miuix.kmp.basic.Card as MiuixCard
 import top.yukonga.miuix.kmp.basic.CardDefaults as MiuixCardDefaults
 import top.yukonga.miuix.kmp.utils.PressFeedbackType
 
-/** Material `shapes.medium` 默认 18dp，与之保持视觉一致 */
-private val DEFAULT_CARD_CORNER = 18.dp
-
 /**
  * Card：Miuix 用 Miuix Card，Material 用 Material Card。
- * 统一暴露平台无关的语义参数，内部映射到不同实现。
  *
- * @param shape Material 模式使用；默认 `MaterialTheme.shapes.medium`
- * @param cornerRadius Miuix 模式使用；默认 18dp，与 [shape] 默认值视觉一致
+ * 圆角统一用 [shape] 描述。Miuix Card 自身只支持 4 角同值的 `cornerRadius`，
+ * 因此 Miuix 分支以 `cornerRadius = 0.dp` 渲染、外层 `Modifier.clip(shape)` 控制
+ * 实际外形 —— 这样 [SettingCardPosition.First/Middle/Last] 的非对称圆角在两套 UI
+ * 下行为一致，连续卡片自然组合。
+ *
+ * @param shape 卡片形状（默认 `MaterialTheme.shapes.medium`，由 lib `appShapes()` 提供）
  * @param onClick 点击回调，null 时卡片不可点击
  */
 @Composable
@@ -52,7 +54,6 @@ fun ThemeCard(
     contentColor: Color = AnkioTheme.colorScheme.onSurface,
     elevation: Dp = 0.dp,
     border: BorderStroke? = null,
-    cornerRadius: Dp = DEFAULT_CARD_CORNER,
     onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -69,8 +70,10 @@ fun ThemeCard(
         )
 
         UiMode.Miuix -> MiuixCard(
-            modifier = modifier,
-            cornerRadius = cornerRadius,
+            modifier = modifier
+                .clip(shape)
+                .then(if (border != null) Modifier.border(border, shape) else Modifier),
+            cornerRadius = 0.dp,
             colors = MiuixCardDefaults.defaultColors(
                 color = containerColor,
                 contentColor = contentColor,

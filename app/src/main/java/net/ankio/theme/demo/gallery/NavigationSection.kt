@@ -125,7 +125,6 @@ internal fun NavigationSection() {
         ) {
             ThemeNavigationBar(
                 modifier = Modifier.fillMaxWidth(),
-                floating = true,
                 mode = ThemeFloatingNavBarMode.IconAndText,
             ) {
                 items.forEachIndexed { index, (label, icon) ->

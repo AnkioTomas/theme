@@ -237,6 +237,34 @@ internal fun FollowSystemAccentSwitch(
     )
 }
 
+/** 底部导航栏悬浮模式开关 */
+@Composable
+internal fun NavigationBarFloatingSwitch(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    position: SettingCardPosition = SettingCardPosition.Single,
+) {
+    SettingCard(
+        icon = {
+            Icon(
+                imageVector = Icons.Filled.Style,
+                contentDescription = null,
+                tint = AnkioTheme.colorScheme.primary,
+            )
+        },
+        title = stringResource(R.string.theme_navigation_bar_floating),
+        subtitle = stringResource(R.string.theme_navigation_bar_floating_summary),
+        onClick = { onCheckedChange(!checked) },
+        trailing = {
+            ThemeSwitch(
+                checked = checked,
+                onCheckedChange = onCheckedChange,
+            )
+        },
+        position = position,
+    )
+}
+
 /** 主题色设置项：下拉列表选择 */
 @Composable
 internal fun ThemeColorSelector(

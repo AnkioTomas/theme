@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import net.ankio.theme.AnkioTheme
 import net.ankio.theme.LocalUiMode
+import net.ankio.theme.ThemeSettings
 import net.ankio.theme.UiMode
 import top.yukonga.miuix.kmp.basic.FloatingNavigationBar as MiuixFloatingNavigationBar
 import top.yukonga.miuix.kmp.basic.FloatingNavigationBarDisplayMode as MiuixFloatingNavigationBarDisplayMode
@@ -67,7 +68,7 @@ fun ThemeNavigationBar(
     },
     contentColor: Color = AnkioTheme.colorScheme.onSurface,
     showDivider: Boolean = true,
-    floating: Boolean = false,
+    floating: Boolean = ThemeSettings.navigationBarFloating,
     mode: ThemeFloatingNavBarMode = ThemeFloatingNavBarMode.IconAndText,
     content: @Composable RowScope.() -> Unit,
 ) {

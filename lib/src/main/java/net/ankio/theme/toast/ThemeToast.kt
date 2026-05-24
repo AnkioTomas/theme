@@ -37,12 +37,12 @@ import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.ComposeView
@@ -220,10 +220,11 @@ object ThemeToast {
 }
 
 /**
- * Toast 视觉描述：图标 + 容器底色（淡彩）+ 信号色（图标 / 文字），对应一个 [ThemeToast.Style]。
+ * Toast 视觉描述：图标 + 不透明饱和背景 + 白色前景，对应一个 [ThemeToast.Style]。
  *
- * 配色与 demo `ThemeTokensSection` 的 `SemanticRow` 保持一致：
- * `bg` 做容器背景、`text` 做前景，避免"toast 偏紫"等 surfaceTint 污染。
+ * 用 `text` 字段做不透明饱和背景（深色信号色）+ 白字，浮窗下不透下层界面，识别度高。
+ * 与 demo `ThemeTokensSection.SemanticRow` 的"软色容器"刻意区分：toast 是抢眼提示，
+ * 容器条是页内状态条，承担不同视觉权重。
  */
 @Immutable
 private data class ToastVisuals(
@@ -241,34 +242,32 @@ private fun OverlayToastContent(
 ) {
     val extra = appExtraColors(darkTheme)
     val visuals = when (style) {
-        ThemeToast.Style.Debug -> ToastVisuals(Icons.Rounded.Notifications, extra.debug.bg, extra.debug.text)
-        ThemeToast.Style.Error -> ToastVisuals(Icons.Rounded.Warning, extra.error.bg, extra.error.text)
-        ThemeToast.Style.Success -> ToastVisuals(Icons.Rounded.Check, extra.success.bg, extra.success.text)
-        ThemeToast.Style.Warning -> ToastVisuals(Icons.Rounded.Warning, extra.warning.bg, extra.warning.text)
-        ThemeToast.Style.Info -> ToastVisuals(Icons.Rounded.Info, extra.info.bg, extra.info.text)
+        ThemeToast.Style.Debug -> ToastVisuals(Icons.Rounded.Notifications, extra.debug.text, Color.White)
+        ThemeToast.Style.Error -> ToastVisuals(Icons.Rounded.Warning, extra.error.text, Color.White)
+        ThemeToast.Style.Success -> ToastVisuals(Icons.Rounded.Check, extra.success.text, Color.White)
+        ThemeToast.Style.Warning -> ToastVisuals(Icons.Rounded.Warning, extra.warning.text, Color.White)
+        ThemeToast.Style.Info -> ToastVisuals(Icons.Rounded.Info, extra.info.text, Color.White)
     }
 
-    Surface(
-        shape = RoundedCornerShape(26.dp),
-        color = MaterialTheme.colorScheme.surface,
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(26.dp))
+            .background(visuals.container)
+            .widthIn(max = 520.dp)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
-        Box(modifier = Modifier.background(visuals.container)) {
-            Row(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
-                    .widthIn(max = 520.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(visuals.icon, null, Modifier.size(24.dp), tint = visuals.signal)
-                Text(
-                    message,
-                    color = visuals.signal,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.weight(1f, fill = false),
-                )
-                trailingContent?.invoke()
-            }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            Icon(visuals.icon, null, Modifier.size(22.dp), tint = visuals.signal)
+            Text(
+                text = message,
+                color = visuals.signal,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.weight(1f, fill = false),
+            )
+            trailingContent?.invoke()
         }
     }
 }

@@ -32,6 +32,8 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.core.view.WindowInsetsControllerCompat
 import top.yukonga.miuix.kmp.theme.ColorSchemeMode
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -69,7 +71,19 @@ fun AutoTheme(
     val darkTheme = settings.colorMode.isDark || (settings.colorMode.isSystem && systemDark)
     val extraColors = remember(darkTheme) { appExtraColors(darkTheme) }
 
+    // 全局缩放：把当前设备 density 按用户设置的百分比放缩，影响所有子组件的 dp/sp。
+    // 这是"显示比例"设置真正生效的入口 —— 修改 LocalDensity 后整棵子树自动按新密度重新测量。
+    val baseDensity = LocalDensity.current
+    val scale = settings.displayPercentage / 100f
+    val scaledDensity = remember(baseDensity, scale) {
+        Density(
+            density = baseDensity.density * scale,
+            fontScale = baseDensity.fontScale * scale,
+        )
+    }
+
     CompositionLocalProvider(
+        LocalDensity provides scaledDensity,
         LocalColorMode provides settings.colorMode,
         LocalAppExtraColors provides extraColors
     ) {

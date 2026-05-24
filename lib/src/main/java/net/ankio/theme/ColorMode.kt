@@ -40,8 +40,13 @@ enum class ColorMode(val value: Int) {
     val isMonet: Boolean get() = value >= 3
 }
 
-/** 主题配置：颜色模式 + 强调色（0=跟随系统动态色，否则为种子色 ARGB） */
+/**
+ * 主题配置：颜色模式 + 强调色 + 显示比例。
+ * @param keyColor 0=跟随系统动态色，否则为种子色 ARGB
+ * @param displayPercentage 全局缩放百分比（影响 [androidx.compose.ui.platform.LocalDensity]，默认 100）
+ */
 data class AppSettings(
     val colorMode: ColorMode,
     val keyColor: Int,
+    val displayPercentage: Int = 100,
 )

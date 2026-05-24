@@ -10,6 +10,8 @@
     <string name="theme_theme_color_summary">Choose app accent color</string>
     <string name="theme_follow_system_accent">Dynamic Colors</string>
     <string name="theme_follow_system_accent_summary">Theme colors based on wallpaper</string>
+    <string name="theme_display_percentage">Display Scale</string>
+    <string name="theme_display_percentage_summary">Resize text and controls globally</string>
     <string name="theme_dialog_close">Close</string>
 
     <string name="theme_ui_mode_miuix">Miuix</string>

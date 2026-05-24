@@ -108,6 +108,7 @@ fun UiSettingsScreen(
     var colorMode by remember { mutableStateOf(ThemeSettings.colorMode) }
     var followSystemAccent by remember { mutableStateOf(ThemeSettings.followSystemAccent) }
     var themeColor by remember { mutableStateOf(ThemeSettings.themeColor) }
+    var displayPercentage by remember { mutableStateOf(ThemeSettings.displayPercentage) }
 
     val scrollState = rememberScrollState()
 
@@ -147,6 +148,15 @@ fun UiSettingsScreen(
                 onThemeChanged()
             },
             entries = colorModeEntries,
+            position = SettingCardPosition.Middle,
+        )
+        DisplayPercentageSlider(
+            value = displayPercentage,
+            onValueChange = { displayPercentage = it },
+            onValueChangeFinished = {
+                ThemeSettings.displayPercentage = displayPercentage
+                onThemeChanged()
+            },
             position = SettingCardPosition.Last,
         )
 

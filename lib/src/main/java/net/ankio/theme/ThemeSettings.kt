@@ -37,9 +37,15 @@ object ThemeSettings {
     private const val KEY_COLOR_MODE = "color_mode"
     private const val KEY_FOLLOW_SYSTEM_ACCENT = "follow_system_accent"
     private const val KEY_THEME_COLOR = "theme_color"
+    private const val KEY_DISPLAY_PERCENTAGE = "display_percentage"
 
     private const val DEFAULT_UI_MODE = "miuix"
     private const val DEFAULT_THEME_COLOR = "MATERIAL_DEFAULT"
+    private const val DEFAULT_DISPLAY_PERCENTAGE = 100
+
+    /** 显示比例允许范围。下限避免点击区域过小，上限避免布局坍塌。 */
+    const val MIN_DISPLAY_PERCENTAGE = 85
+    const val MAX_DISPLAY_PERCENTAGE = 130
 
     private lateinit var appContext: Context
     private lateinit var pref: SharedPreferences
@@ -71,6 +77,18 @@ object ThemeSettings {
     var followSystemAccent: Boolean
         get() = requirePref().getBoolean(KEY_FOLLOW_SYSTEM_ACCENT, true)
         set(value) = requirePref().edit { putBoolean(KEY_FOLLOW_SYSTEM_ACCENT, value) }
+
+    /**
+     * 全局显示比例（百分比，范围 [MIN_DISPLAY_PERCENTAGE]..[MAX_DISPLAY_PERCENTAGE]）。
+     * 100 = 系统默认密度。AutoTheme 会按此值缩放 LocalDensity，影响所有 dp / sp 渲染。
+     * 读写自动 coerceIn 保护边界，避免极端值导致布局坍塌。
+     */
+    var displayPercentage: Int
+        get() = requirePref().getInt(KEY_DISPLAY_PERCENTAGE, DEFAULT_DISPLAY_PERCENTAGE)
+            .coerceIn(MIN_DISPLAY_PERCENTAGE, MAX_DISPLAY_PERCENTAGE)
+        set(value) = requirePref().edit {
+            putInt(KEY_DISPLAY_PERCENTAGE, value.coerceIn(MIN_DISPLAY_PERCENTAGE, MAX_DISPLAY_PERCENTAGE))
+        }
 
     /**
      * 主题色标识（如 MATERIAL_DEFAULT）。
@@ -139,5 +157,5 @@ object ThemeSettings {
     }
 
     /** 当前 AppSettings，供 AutoTheme 使用 */
-    fun getAppSettings(): AppSettings = AppSettings(currentColorMode, keyColor)
+    fun getAppSettings(): AppSettings = AppSettings(currentColorMode, keyColor, displayPercentage)
 }

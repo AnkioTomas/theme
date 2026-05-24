@@ -113,7 +113,7 @@ internal fun SettingCard(
                 }
                 Column(Modifier
                     .weight(1f)
-                    .padding(horizontal = 12.dp)) {
+                    .padding(horizontal = 8.dp)) {
                     ThemeText(
                         text = title,
                         style = AnkioTheme.textStyles.title4,

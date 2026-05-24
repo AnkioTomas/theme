@@ -83,7 +83,8 @@ private class AnchorEndPopupPositionProvider(
 
 /**
  * 带图标/副标题的 Spinner 兼容层。
- * Miuix 走 [MiuixWindowSpinner]（窗口级，无需外层 Scaffold）；
+ * Miuix 走 [MiuixWindowSpinner]（窗口级，无需外层 Scaffold），外层用 [ThemeCard] 提供
+ * 统一卡片背景与圆角，与 [SettingCard] 视觉一致；
  * Material 走 [Popup] + [AnchorEndPopupPositionProvider]，弹窗右上角对齐 Card 右下角，
  * 视觉上与 Miuix 保持一致。
  *
@@ -125,17 +126,36 @@ fun ThemeSuperSpinner(
             showValue = showValue,
         )
 
-        UiMode.Miuix -> MiuixWindowSpinner(
-            items = items,
-            selectedIndex = selectedIndex,
-            title = title,
+        UiMode.Miuix -> ThemeCard(
             modifier = modifier,
-            summary = summary,
-            startAction = startAction,
-            enabled = enabled,
-            showValue = showValue,
-            onSelectedIndexChange = onSelectedIndexChange,
-        )
+            shape = shape,
+        ) {
+            MiuixWindowSpinner(
+                items = items,
+                selectedIndex = selectedIndex,
+                title = title,
+                summary = summary,
+                // 把裸 Icon 装进 40dp 容器，与 SettingCard / MaterialSpinner 对齐 title 起点。
+                // 否则 BasicComponent 直接放裸 Icon（24dp），title 起点会比其它卡片偏左 16dp。
+                startAction = startAction?.let { sa ->
+                    { IconSlot(sa) }
+                },
+                enabled = enabled,
+                showValue = showValue,
+                onSelectedIndexChange = onSelectedIndexChange,
+            )
+        }
+    }
+}
+
+/** 40dp 居中容器，统一三套 Spinner / Card 的 title 左侧基线。 */
+@Composable
+private fun IconSlot(content: @Composable () -> Unit) {
+    Box(
+        modifier = Modifier.size(40.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        content()
     }
 }
 
@@ -177,7 +197,7 @@ private fun MaterialSpinner(
                         Modifier.size(40.dp),
                         contentAlignment = Alignment.Center,
                     ) { startAction() }
-                    Spacer(Modifier.size(12.dp))
+                    Spacer(Modifier.size(8.dp))
                 }
                 Column(modifier = Modifier.weight(1f)) {
                     ThemeText(

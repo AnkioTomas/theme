@@ -22,14 +22,12 @@ import androidx.compose.ui.unit.dp
 import net.ankio.theme.AnkioTheme
 import net.ankio.theme.BaseComposeActivity
 import net.ankio.theme.ThemeSettings
-import net.ankio.theme.UiMode
 import net.ankio.theme.compat.ThemeIcon
 import net.ankio.theme.compat.ThemeIconButton
 import net.ankio.theme.compat.ThemeTabRow
 import net.ankio.theme.compat.ThemeText
 import net.ankio.theme.compat.ThemeTopAppBar
 import net.ankio.theme.demo.gallery.ComponentsGallery
-import net.ankio.theme.settings.UiSettingsOptions
 import net.ankio.theme.settings.UiSettingsScreen
 
 /**
@@ -88,7 +86,6 @@ class MainActivity : BaseComposeActivity() {
                             .padding(horizontal = 12.dp, vertical = 8.dp),
                     )
                     else -> UiSettingsScreen(
-                        options = demoOptions,
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(horizontal = 8.dp),
@@ -97,24 +94,5 @@ class MainActivity : BaseComposeActivity() {
                 }
             }
         }
-    }
-
-    companion object {
-        private val demoOptions = UiSettingsOptions(
-            uiModeEntries = listOf(
-                UiMode.Miuix.value to "Miuix",
-                UiMode.Material.value to "Material",
-            ),
-            colorModeEntries = listOf(
-                0 to "Follow system (MIUI)",
-                1 to "Light",
-                2 to "Dark",
-                3 to "Follow system (Monet)",
-                4 to "Light (Monet)",
-                5 to "Dark (Monet)",
-                6 to "Dark (AMOLED)",
-            ),
-            themeColorEntries = emptyList(),
-        )
     }
 }

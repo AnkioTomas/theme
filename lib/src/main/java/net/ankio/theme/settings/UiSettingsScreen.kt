@@ -30,7 +30,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -62,11 +61,6 @@ data class UiSettingsOptions(
 private fun UiSettingsScreenPreview(
     @PreviewParameter(ThemePreviewParameterProvider::class) config: ThemePreviewConfig,
 ) {
-    val ctx = LocalContext.current
-    // remember 在 composition 阶段同步执行，确保 init 在任何 ThemeSettings 访问之前完成
-    remember {
-        ThemeSettings.init(ctx)
-    }
     /** 预览用 UiSettingsOptions（英语） */
     val previewOptions = UiSettingsOptions(
         uiModeEntries = listOf("miuix" to "Miuix", "material" to "Material"),

@@ -22,7 +22,9 @@ import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -46,6 +48,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import java.lang.ref.WeakReference
+import net.ankio.theme.ThemeSettings
 import net.ankio.theme.appExtraColors
 import net.ankio.theme.colorSchemeFromSeed
 
@@ -136,8 +139,7 @@ object ThemeToast {
         trailingContent: (@Composable () -> Unit)?,
     ) {
         val wm = ctx.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val darkTheme = (ctx.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
-                Configuration.UI_MODE_NIGHT_YES
+        val darkTheme = resolveDarkTheme(ctx)
 
         val owner = ComposeOverlayOwner()
         val composeView = ComposeView(ctx).apply {
@@ -160,6 +162,18 @@ object ThemeToast {
             owner.detach()
             Toast.makeText(ctx, message, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    /**
+     * 决定 Toast 使用浅色还是深色配色：
+     * 优先跟随 [ThemeSettings.shouldUseDarkTheme]（与 app 一致，包括用户强制 Light/Dark 的场景），
+     * 若 ThemeSettings 未初始化则回退到系统 uiMode flag。
+     */
+    private fun resolveDarkTheme(ctx: Context): Boolean = runCatching {
+        ThemeSettings.shouldUseDarkTheme(ctx)
+    }.getOrElse {
+        (ctx.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+                Configuration.UI_MODE_NIGHT_YES
     }
 
     private fun buildLayoutParams(ctx: Context, config: Config): WindowManager.LayoutParams =
@@ -205,12 +219,17 @@ object ThemeToast {
     }
 }
 
-/** Toast 视觉描述：图标 + 背景色 + 文字色，对应一个 [ThemeToast.Style]。 */
+/**
+ * Toast 视觉描述：图标 + 容器底色（淡彩）+ 信号色（图标 / 文字），对应一个 [ThemeToast.Style]。
+ *
+ * 配色与 demo `ThemeTokensSection` 的 `SemanticRow` 保持一致：
+ * `bg` 做容器背景、`text` 做前景，避免"toast 偏紫"等 surfaceTint 污染。
+ */
 @Immutable
 private data class ToastVisuals(
     val icon: ImageVector,
-    val background: Color,
-    val foreground: Color,
+    val container: Color,
+    val signal: Color,
 )
 
 @Composable
@@ -222,33 +241,34 @@ private fun OverlayToastContent(
 ) {
     val extra = appExtraColors(darkTheme)
     val visuals = when (style) {
-        ThemeToast.Style.Debug -> ToastVisuals(Icons.Rounded.Notifications, extra.debug.text, Color.White)
-        ThemeToast.Style.Error -> ToastVisuals(Icons.Rounded.Warning, extra.error.text, Color.White)
-        ThemeToast.Style.Success -> ToastVisuals(Icons.Rounded.Check, extra.success.text, Color.White)
-        ThemeToast.Style.Warning -> ToastVisuals(Icons.Rounded.Warning, extra.warning.text, Color.White)
-        ThemeToast.Style.Info -> ToastVisuals(Icons.Rounded.Info, extra.info.text, Color.White)
+        ThemeToast.Style.Debug -> ToastVisuals(Icons.Rounded.Notifications, extra.debug.bg, extra.debug.text)
+        ThemeToast.Style.Error -> ToastVisuals(Icons.Rounded.Warning, extra.error.bg, extra.error.text)
+        ThemeToast.Style.Success -> ToastVisuals(Icons.Rounded.Check, extra.success.bg, extra.success.text)
+        ThemeToast.Style.Warning -> ToastVisuals(Icons.Rounded.Warning, extra.warning.bg, extra.warning.text)
+        ThemeToast.Style.Info -> ToastVisuals(Icons.Rounded.Info, extra.info.bg, extra.info.text)
     }
 
     Surface(
         shape = RoundedCornerShape(26.dp),
-        color = visuals.background,
-        tonalElevation = 2.dp,
+        color = MaterialTheme.colorScheme.surface,
     ) {
-        Row(
-            modifier = Modifier
-                .padding(12.dp)
-                .widthIn(max = 520.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(visuals.icon, null, Modifier.size(24.dp), tint = visuals.foreground)
-            Text(
-                message,
-                color = visuals.foreground,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.weight(1f, fill = false),
-            )
-            trailingContent?.invoke()
+        Box(modifier = Modifier.background(visuals.container)) {
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .widthIn(max = 520.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(visuals.icon, null, Modifier.size(24.dp), tint = visuals.signal)
+                Text(
+                    message,
+                    color = visuals.signal,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.weight(1f, fill = false),
+                )
+                trailingContent?.invoke()
+            }
         }
     }
 }

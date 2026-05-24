@@ -27,8 +27,6 @@ enum class UiMode(val value: String) {
 
     companion object {
         fun fromValue(value: String): UiMode = entries.find { it.value == value } ?: Miuix
-
-        val DEFAULT_VALUE = Miuix.value
     }
 }
 

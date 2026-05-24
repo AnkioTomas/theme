@@ -48,13 +48,10 @@ internal fun StatusSection() {
             "ThemeSettings.followSystemAccent",
             ThemeSettings.followSystemAccent.toString(),
         )
-        StatusRow(
-            "ThemeSettings.displayPercentage",
-            "${ThemeSettings.displayPercentage}%",
-        )
 
         Caption("当前 keyColor 直观预览")
         Row(verticalAlignment = Alignment.CenterVertically) {
+            val followSystem = ThemeSettings.followSystemAccent
             val previewColor = if (ThemeSettings.keyColor == 0) {
                 AnkioTheme.colorScheme.primary
             } else {
@@ -67,7 +64,7 @@ internal fun StatusSection() {
                     .background(previewColor),
             )
             ThemeText(
-                text = if (ThemeSettings.keyColor == 0) " · 跟随系统动态色" else " · 种子色",
+                text = if (followSystem) " · 跟随系统动态色" else " · 用户自选种子色",
                 style = AnkioTheme.textStyles.body2,
                 color = AnkioTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(start = 8.dp),

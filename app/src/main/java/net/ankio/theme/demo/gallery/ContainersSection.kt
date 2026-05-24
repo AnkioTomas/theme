@@ -77,12 +77,11 @@ internal fun ContainersSection() {
             )
         }
 
-        Caption("ThemeCard · 可点击 + 自定义 cornerRadius")
+        Caption("ThemeCard · 可点击 + 自定义 shape (28dp 圆角)")
         var clickCount by remember { mutableIntStateOf(0) }
         ThemeCard(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(28.dp),
-            cornerRadius = 28.dp,
             onClick = { clickCount++ },
         ) {
             ThemeText(

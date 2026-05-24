@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="theme_section_style">主题风格</string>
+    <string name="theme_section_color">主题颜色</string>
+    <string name="theme_section_display">显示</string>
+    <string name="theme_ui_style">UI 引擎</string>
+    <string name="theme_ui_style_summary">选择 Miuix 或 Material 界面</string>
+    <string name="theme_color_mode">主题模式</string>
+    <string name="theme_color_mode_summary">跟随系统或手动选择</string>
+    <string name="theme_theme_color">主题色</string>
+    <string name="theme_theme_color_summary">选择应用主题色</string>
+    <string name="theme_follow_system_accent">动态颜色</string>
+    <string name="theme_follow_system_accent_summary">基于壁纸的主题颜色</string>
+    <string name="theme_display_percentage">页面显示比例</string>
+    <string name="theme_display_percentage_summary">控制页面显示效果</string>
+    <string name="theme_dialog_close">关闭</string>
+
+    <string name="theme_color_default">默认</string>
+    <string name="theme_color_sakura">樱花</string>
+    <string name="theme_color_red">红色</string>
+    <string name="theme_color_pink">粉色</string>
+    <string name="theme_color_purple">紫色</string>
+    <string name="theme_color_deep_purple">深紫色</string>
+    <string name="theme_color_indigo">靛蓝</string>
+    <string name="theme_color_blue">蓝色</string>
+    <string name="theme_color_light_blue">浅蓝色</string>
+    <string name="theme_color_cyan">青色</string>
+    <string name="theme_color_teal">蓝绿色</string>
+    <string name="theme_color_green">绿色</string>
+    <string name="theme_color_light_green">浅绿色</string>
+    <string name="theme_color_lime">酸橙色</string>
+    <string name="theme_color_yellow">黄色</string>
+    <string name="theme_color_amber">琥珀色</string>
+    <string name="theme_color_orange">橙色</string>
+    <string name="theme_color_deep_orange">深橙色</string>
+    <string name="theme_color_brown">棕色</string>
+    <string name="theme_color_blue_grey">蓝灰色</string>
+</resources>

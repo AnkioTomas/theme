@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="theme_section_style">Theme Style</string>
+    <string name="theme_section_color">Theme Color</string>
+    <string name="theme_section_display">Display</string>
+    <string name="theme_ui_style">UI Engine</string>
+    <string name="theme_ui_style_summary">Choose Miuix or Material interface</string>
+    <string name="theme_color_mode">Theme Mode</string>
+    <string name="theme_color_mode_summary">Follow system or set manually</string>
+    <string name="theme_theme_color">Theme Color</string>
+    <string name="theme_theme_color_summary">Choose app accent color</string>
+    <string name="theme_follow_system_accent">Dynamic Colors</string>
+    <string name="theme_follow_system_accent_summary">Theme colors based on wallpaper</string>
+    <string name="theme_display_percentage">Page Display Scale</string>
+    <string name="theme_display_percentage_summary">Control page display effect</string>
+    <string name="theme_dialog_close">Close</string>
+
+    <string name="theme_color_default">Default</string>
+    <string name="theme_color_sakura">Sakura</string>
+    <string name="theme_color_red">Red</string>
+    <string name="theme_color_pink">Pink</string>
+    <string name="theme_color_purple">Purple</string>
+    <string name="theme_color_deep_purple">Deep purple</string>
+    <string name="theme_color_indigo">Indigo</string>
+    <string name="theme_color_blue">Blue</string>
+    <string name="theme_color_light_blue">Light blue</string>
+    <string name="theme_color_cyan">Cyan</string>
+    <string name="theme_color_teal">Teal</string>
+    <string name="theme_color_green">Green</string>
+    <string name="theme_color_light_green">Light green</string>
+    <string name="theme_color_lime">Lime</string>
+    <string name="theme_color_yellow">Yellow</string>
+    <string name="theme_color_amber">Amber</string>
+    <string name="theme_color_orange">Orange</string>
+    <string name="theme_color_deep_orange">Deep orange</string>
+    <string name="theme_color_brown">Brown</string>
+    <string name="theme_color_blue_grey">Blue grey</string>
+</resources>

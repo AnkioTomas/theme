@@ -12,6 +12,17 @@
     <string name="theme_follow_system_accent_summary">Theme colors based on wallpaper</string>
     <string name="theme_dialog_close">Close</string>
 
+    <string name="theme_ui_mode_miuix">Miuix</string>
+    <string name="theme_ui_mode_material">Material</string>
+
+    <string name="theme_color_mode_system">Follow system (MIUI)</string>
+    <string name="theme_color_mode_light">Light</string>
+    <string name="theme_color_mode_dark">Dark</string>
+    <string name="theme_color_mode_monet_system">Follow system (Monet)</string>
+    <string name="theme_color_mode_monet_light">Light (Monet)</string>
+    <string name="theme_color_mode_monet_dark">Dark (Monet)</string>
+    <string name="theme_color_mode_dark_amoled">Dark (AMOLED)</string>
+
     <string name="theme_color_default">Default</string>
     <string name="theme_color_sakura">Sakura</string>
     <string name="theme_color_red">Red</string>

@@ -11,10 +11,13 @@ package net.ankio.theme.toast
 
 import android.app.Application
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.PixelFormat
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
@@ -85,6 +88,29 @@ object ThemeToast {
         appContext = application.applicationContext
     }
 
+    /**
+     * 是否已授予悬浮窗权限（[Settings.canDrawOverlays]）。
+     * 没授权时 [show] 会降级为系统 [Toast]。
+     * 不传 [context] 时使用 [init] 注入的 application context；
+     * 若 [init] 也未调用，返回 false。
+     */
+    fun hasOverlayPermission(context: Context? = appContext): Boolean {
+        val ctx = context ?: return false
+        return Settings.canDrawOverlays(ctx)
+    }
+
+    /**
+     * 跳转到系统设置页让用户授予本应用悬浮窗权限。
+     * 调用方需自己处理回到 app 后的状态刷新（通常下次 onResume 重新检查 [hasOverlayPermission]）。
+     */
+    fun requestOverlayPermission(context: Context) {
+        val intent = Intent(
+            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+            Uri.parse("package:${context.packageName}"),
+        ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    }
+
     fun show(
         message: String,
         style: Style = Style.Info,
@@ -94,7 +120,11 @@ object ThemeToast {
         val ctx = appContext ?: return
         mainHandler.post {
             dismissOverlay()
-            tryShowOverlay(ctx, message, style, config, trailingContent)
+            if (Settings.canDrawOverlays(ctx)) {
+                tryShowOverlay(ctx, message, style, config, trailingContent)
+            } else {
+                Toast.makeText(ctx, message, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

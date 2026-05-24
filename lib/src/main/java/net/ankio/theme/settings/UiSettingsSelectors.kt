@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -164,13 +165,18 @@ internal fun ThemeColorSelector(
     }
     val items = themeKeyOptions.map { key ->
         SpinnerEntry(
-            icon = {
+            icon = { iconModifier ->
                 Box(
-                    modifier = Modifier
-                        .size(16.dp)
-                        .clip(MaterialTheme.shapes.small)
-                        .background(Color(seedColorFromThemeKey(key))),
-                )
+                    modifier = iconModifier,
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(20.dp)
+                            .clip(MaterialTheme.shapes.small)
+                            .background(Color(seedColorFromThemeKey(key))),
+                    )
+                }
             },
             title = keyLabels[key] ?: key,
         )

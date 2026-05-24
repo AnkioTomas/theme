@@ -45,12 +45,13 @@ import net.ankio.theme.themeKeyOptions
 
 /**
  * UI 设置数据，用于 [UiSettingsScreen] 的选项展示。
- * 选择器标题使用 theme 库多语言（默认英语），此处仅传选项值及显示文案。
+ * 各 entries 默认 `emptyList()`，表示由 lib 自动提供本地化文案与全部枚举项；
+ * 调用方仅在需要裁剪选项或自定义文案时才传入。
  */
 data class UiSettingsOptions(
-    val uiModeEntries: List<Pair<String, String>>,
-    val colorModeEntries: List<Pair<Int, String>>,
-    val themeColorEntries: List<Pair<String, String>>,
+    val uiModeEntries: List<Pair<String, String>> = emptyList(),
+    val colorModeEntries: List<Pair<Int, String>> = emptyList(),
+    val themeColorEntries: List<Pair<String, String>> = emptyList(),
 )
 
 
@@ -98,7 +99,7 @@ private fun UiSettingsScreenPreview(
  */
 @Composable
 fun UiSettingsScreen(
-    options: UiSettingsOptions,
+    options: UiSettingsOptions = UiSettingsOptions(),
     modifier: Modifier = Modifier,
     onThemeChanged: () -> Unit = {},
 ) {
@@ -108,6 +109,9 @@ fun UiSettingsScreen(
     var themeColor by remember { mutableStateOf(ThemeSettings.themeColor) }
 
     val scrollState = rememberScrollState()
+
+    val uiModeEntries = options.uiModeEntries.takeIf { it.isNotEmpty() } ?: defaultUiModeEntries()
+    val colorModeEntries = options.colorModeEntries.takeIf { it.isNotEmpty() } ?: defaultColorModeEntries()
 
     Column(
         modifier = modifier
@@ -124,7 +128,7 @@ fun UiSettingsScreen(
                 ThemeSettings.uiMode = it
                 onThemeChanged()
             },
-            entries = options.uiModeEntries,
+            entries = uiModeEntries,
         )
 
         ColorModeSelector(
@@ -134,7 +138,7 @@ fun UiSettingsScreen(
                 ThemeSettings.colorMode = it
                 onThemeChanged()
             },
-            entries = options.colorModeEntries,
+            entries = colorModeEntries,
         )
 
         FollowSystemAccentSwitch(
@@ -163,3 +167,22 @@ fun UiSettingsScreen(
         Spacer(Modifier.height(4.dp))
     }
 }
+
+/** 默认 UI 引擎选项（Miuix / Material），文案走 lib 多语言资源 */
+@Composable
+private fun defaultUiModeEntries(): List<Pair<String, String>> = listOf(
+    "miuix" to stringResource(R.string.theme_ui_mode_miuix),
+    "material" to stringResource(R.string.theme_ui_mode_material),
+)
+
+/** 默认颜色模式选项（7 项 ColorMode），文案走 lib 多语言资源 */
+@Composable
+private fun defaultColorModeEntries(): List<Pair<Int, String>> = listOf(
+    ColorMode.SYSTEM.value to stringResource(R.string.theme_color_mode_system),
+    ColorMode.LIGHT.value to stringResource(R.string.theme_color_mode_light),
+    ColorMode.DARK.value to stringResource(R.string.theme_color_mode_dark),
+    ColorMode.MONET_SYSTEM.value to stringResource(R.string.theme_color_mode_monet_system),
+    ColorMode.MONET_LIGHT.value to stringResource(R.string.theme_color_mode_monet_light),
+    ColorMode.MONET_DARK.value to stringResource(R.string.theme_color_mode_monet_dark),
+    ColorMode.DARK_AMOLED.value to stringResource(R.string.theme_color_mode_dark_amoled),
+)

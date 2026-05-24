@@ -12,6 +12,17 @@
     <string name="theme_follow_system_accent_summary">基于壁纸的主题颜色</string>
     <string name="theme_dialog_close">关闭</string>
 
+    <string name="theme_ui_mode_miuix">Miuix</string>
+    <string name="theme_ui_mode_material">Material</string>
+
+    <string name="theme_color_mode_system">跟随系统（MIUI）</string>
+    <string name="theme_color_mode_light">浅色</string>
+    <string name="theme_color_mode_dark">深色</string>
+    <string name="theme_color_mode_monet_system">跟随系统（Monet）</string>
+    <string name="theme_color_mode_monet_light">浅色（Monet）</string>
+    <string name="theme_color_mode_monet_dark">深色（Monet）</string>
+    <string name="theme_color_mode_dark_amoled">深色（AMOLED）</string>
+
     <string name="theme_color_default">默认</string>
     <string name="theme_color_sakura">樱花</string>
     <string name="theme_color_red">红色</string>

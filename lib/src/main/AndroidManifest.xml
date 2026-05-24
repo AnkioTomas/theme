@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!--
+        ThemeToast 通过 TYPE_APPLICATION_OVERLAY 在窗口级渲染主题化 Toast。
+        API 26+ 必须声明此权限，且需要用户在系统设置中授予。
+        ThemeToast.show() 在未授权时会自动降级为系统 Toast。
+    -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
 </manifest>

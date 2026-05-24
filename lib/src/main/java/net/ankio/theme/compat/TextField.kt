@@ -32,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
@@ -72,7 +73,7 @@ enum class TextFieldStyle {
  * @param enabled 是否可编辑
  * @param readOnly 是否只读
  * @param leadingIcon 前导图标
- * @param trailingIcon 后导图标。Miuix 模式下建议在 IconButton 上使用 Modifier.padding(end = 12.dp) 以避免贴边
+ * @param trailingIcon 后导图标
  * @param visualTransformation 视觉变换（如密码遮罩）
  * @param keyboardOptions 键盘选项
  * @param keyboardActions 键盘动作
@@ -208,18 +209,11 @@ fun ThemeTextField(
                 else -> ""
             }
             val useLabelAsPlaceholder = label.isEmpty() && placeholder.isNotEmpty()
-            // 右侧图标：边距 + 统一 tint（onSurfaceVariant）
-            val wrappedTrailingIcon = remember(trailingIcon, colors.onSurfaceVariant) {
-                trailingIcon?.let { icon ->
-                    @Composable {
-                        Box(modifier = Modifier.padding(end = 12.dp)) {
-                            CompositionLocalProvider(LocalContentColor provides colors.onSurfaceVariant) {
-                                icon()
-                            }
-                        }
-                    }
-                }
-            }
+            // Miuix 不会给 leading/trailing icon 加任何水平 padding（当两个 icon 都存在时甚至连文本两侧都不加），
+            // 必须在此统一包装内边距 + 同色 tint，否则图标会贴边或贴文本
+            val tint = colors.onSurfaceVariant
+            val wrappedLeadingIcon = remember(leadingIcon, tint) { wrapMiuixFieldIcon(leadingIcon, tint) }
+            val wrappedTrailingIcon = remember(trailingIcon, tint) { wrapMiuixFieldIcon(trailingIcon, tint) }
             val miuixTextStyle = remember(textStyle, colors.onSurface) {
                 textStyle.copy(color = colors.onSurface)
             }
@@ -237,7 +231,7 @@ fun ThemeTextField(
                     useLabelAsPlaceholder = useLabelAsPlaceholder,
                     enabled = enabled,
                     readOnly = readOnly,
-                    leadingIcon = leadingIcon,
+                    leadingIcon = wrappedLeadingIcon,
                     trailingIcon = wrappedTrailingIcon,
                     textStyle = miuixTextStyle,
                     keyboardOptions = keyboardOptions,
@@ -252,6 +246,24 @@ fun ThemeTextField(
                     Spacer(modifier = Modifier.height(4.dp))
                     supportingText()
                 }
+            }
+        }
+    }
+}
+
+/**
+ * Miuix TextField 内部不会给 leading/trailing icon 加任何水平 padding；
+ * 此 helper 把图标统一包成「左右各 12dp 留白 + 指定 tint」，
+ * 让 leading 不贴左边框、trailing 不贴右边框，且都与文本之间留出间距。
+ */
+private fun wrapMiuixFieldIcon(
+    icon: (@Composable () -> Unit)?,
+    tint: Color,
+): (@Composable () -> Unit)? = icon?.let { original ->
+    @Composable {
+        Box(modifier = Modifier.padding(horizontal = 12.dp)) {
+            CompositionLocalProvider(LocalContentColor provides tint) {
+                original()
             }
         }
     }

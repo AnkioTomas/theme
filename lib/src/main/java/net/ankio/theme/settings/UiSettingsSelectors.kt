@@ -77,9 +77,7 @@ internal fun UiModeSelector(
 ) {
     val items = entries.map { it.second }
     val selectedIndex = entries.indexOfFirst { it.first == value }.coerceIn(0, items.size - 1)
-    val (topPad, bottomPad) = position.toVerticalPadding()
-
-    ThemeSuperDropdown(
+    ThemeSettingDropdown(
         items = items,
         selectedIndex = selectedIndex,
         onSelectedIndexChange = { onValueChange(entries[it].first) },
@@ -92,10 +90,7 @@ internal fun UiModeSelector(
                 tint = AnkioTheme.colorScheme.primary,
             )
         },
-        shape = position.toShape(),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = topPad, bottom = bottomPad),
+        position = position,
     )
 }
 
@@ -109,9 +104,7 @@ internal fun ColorModeSelector(
 ) {
     val items = entries.map { it.second }
     val selectedIndex = entries.indexOfFirst { it.first == value }.coerceIn(0, items.size - 1)
-    val (topPad, bottomPad) = position.toVerticalPadding()
-
-    ThemeSuperDropdown(
+    ThemeSettingDropdown(
         items = items,
         selectedIndex = selectedIndex,
         onSelectedIndexChange = { onValueChange(entries[it].first) },
@@ -124,10 +117,7 @@ internal fun ColorModeSelector(
                 tint = AnkioTheme.colorScheme.primary,
             )
         },
-        shape = position.toShape(),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = topPad, bottom = bottomPad),
+        position = position,
     )
 }
 

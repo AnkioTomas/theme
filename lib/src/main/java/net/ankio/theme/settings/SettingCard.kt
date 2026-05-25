@@ -42,8 +42,8 @@ enum class SettingCardPosition {
     First, Middle, Last, Single
 }
 
-/** 供 ThemeSuperDropdown 等复用分组圆角 */
-internal fun SettingCardPosition.toShape(): Shape = when (this) {
+/** 供 ThemeSuperDropdown / [ThemeSettingDropdown] 等复用分组圆角 */
+fun SettingCardPosition.toShape(): Shape = when (this) {
     SettingCardPosition.First -> RoundedCornerShape(
         topStart = 12.dp,
         topEnd = 12.dp,
@@ -66,7 +66,7 @@ internal fun SettingCardPosition.toShape(): Shape = when (this) {
  * 分组内卡片的上下间距：First 顶部贴上一项、Last 底部贴下一项，Middle 两侧都留 3dp，
  * Single 上下都留 3dp。所有 Selector 共用此规则避免出现各自 hardcode padding。
  */
-internal fun SettingCardPosition.toVerticalPadding(): Pair<Dp, Dp> = when (this) {
+fun SettingCardPosition.toVerticalPadding(): Pair<Dp, Dp> = when (this) {
     SettingCardPosition.First -> 0.dp to 3.dp
     SettingCardPosition.Middle -> 3.dp to 3.dp
     SettingCardPosition.Last -> 3.dp to 0.dp

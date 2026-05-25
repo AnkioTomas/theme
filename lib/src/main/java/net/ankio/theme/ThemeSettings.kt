@@ -38,12 +38,10 @@ object ThemeSettings {
     private const val KEY_FOLLOW_SYSTEM_ACCENT = "follow_system_accent"
     private const val KEY_THEME_COLOR = "theme_color"
     private const val KEY_DISPLAY_PERCENTAGE = "display_percentage"
-    private const val KEY_NAVIGATION_BAR_FLOATING = "navigation_bar_floating"
 
     private const val DEFAULT_UI_MODE = "miuix"
     private const val DEFAULT_THEME_COLOR = "MATERIAL_DEFAULT"
     private const val DEFAULT_DISPLAY_PERCENTAGE = 100
-    private const val DEFAULT_NAVIGATION_BAR_FLOATING = false
 
     /** 显示比例允许范围。下限避免点击区域过小，上限避免布局坍塌。 */
     const val MIN_DISPLAY_PERCENTAGE = 85
@@ -91,11 +89,6 @@ object ThemeSettings {
         set(value) = requirePref().edit {
             putInt(KEY_DISPLAY_PERCENTAGE, value.coerceIn(MIN_DISPLAY_PERCENTAGE, MAX_DISPLAY_PERCENTAGE))
         }
-
-    /** 底部导航栏是否使用悬浮模式 */
-    var navigationBarFloating: Boolean
-        get() = requirePref().getBoolean(KEY_NAVIGATION_BAR_FLOATING, DEFAULT_NAVIGATION_BAR_FLOATING)
-        set(value) = requirePref().edit { putBoolean(KEY_NAVIGATION_BAR_FLOATING, value) }
 
     /**
      * 主题色标识（如 MATERIAL_DEFAULT）。

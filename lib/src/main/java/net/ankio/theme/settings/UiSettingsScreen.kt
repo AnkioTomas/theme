@@ -103,7 +103,6 @@ fun UiSettingsScreen(
     var followSystemAccent by remember { mutableStateOf(ThemeSettings.followSystemAccent) }
     var themeColor by remember { mutableStateOf(ThemeSettings.themeColor) }
     var displayPercentage by remember { mutableStateOf(ThemeSettings.displayPercentage) }
-    var navigationBarFloating by remember { mutableStateOf(ThemeSettings.navigationBarFloating) }
 
     val scrollState = rememberScrollState()
 
@@ -153,17 +152,6 @@ fun UiSettingsScreen(
                 onThemeChanged()
             },
             position = SettingCardPosition.Last,
-        )
-
-        SectionHeader(text = stringResource(R.string.theme_section_navigation))
-        NavigationBarFloatingSwitch(
-            checked = navigationBarFloating,
-            onCheckedChange = {
-                navigationBarFloating = it
-                ThemeSettings.navigationBarFloating = it
-                onThemeChanged()
-            },
-            position = SettingCardPosition.First,
         )
 
         if (showThemeColorSection) {

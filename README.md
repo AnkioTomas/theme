@@ -115,7 +115,6 @@ setContent {
 | `followSystemAccent` | 跟随系统动态色（Material You） |
 | `themeColor` | 主题色 key，如 `MATERIAL_BLUE`；设置时自动关闭 `followSystemAccent` |
 | `displayPercentage` | 全局显示比例 85–130，100 为默认 |
-| `navigationBarFloating` | 底部导航栏是否悬浮样式 |
 | `keyColor` | 只读，0 = 跟随系统动态色，否则为种子色 ARGB |
 | `isDark` | 只读，当前是否深色主题 |
 | `shouldUseDarkTheme(context)` | 根据 colorMode 判断 |
@@ -189,7 +188,6 @@ UiSettingsScreen(
 设置项分组：
 
 - **主题风格**：UI 引擎、颜色模式、显示比例
-- **导航**：悬浮导航栏
 - **主题颜色**（Material 或 Monet 模式下显示）：动态颜色、主题色
 
 自定义选项文案（默认走 lib 多语言）：
@@ -469,17 +467,11 @@ ThemeTopAppBar(
 
 #### ThemeNavigationBar / ThemeNavigationBarItem
 
-默认读取 `ThemeSettings.navigationBarFloating` 决定是否悬浮；也可显式传入 `floating`：
-
 ```kotlin
 val items = listOf("首页" to Icons.Filled.Home, "设置" to Icons.Filled.Settings)
 var selected by remember { mutableIntStateOf(0) }
 
-ThemeNavigationBar(
-    modifier = Modifier.fillMaxWidth(),
-    // floating = true,  // 可选，覆盖 ThemeSettings
-    mode = ThemeFloatingNavBarMode.IconAndText,
-) {
+ThemeNavigationBar(modifier = Modifier.fillMaxWidth()) {
     items.forEachIndexed { index, (label, icon) ->
         ThemeNavigationBarItem(
             selected = selected == index,
@@ -490,8 +482,6 @@ ThemeNavigationBar(
     }
 }
 ```
-
-`ThemeFloatingNavBarMode`：`IconAndText` / `IconOnly` / `TextOnly`。
 
 #### ThemeNavigationRail
 

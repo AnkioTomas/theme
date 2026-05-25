@@ -12,9 +12,6 @@
     <string name="theme_follow_system_accent_summary">基于壁纸的主题颜色</string>
     <string name="theme_display_percentage">显示比例</string>
     <string name="theme_display_percentage_summary">全局缩放界面文字与控件</string>
-    <string name="theme_section_navigation">导航</string>
-    <string name="theme_navigation_bar_floating">悬浮导航栏</string>
-    <string name="theme_navigation_bar_floating_summary">使用悬浮导航栏样式</string>
     <string name="theme_dialog_close">关闭</string>
 
     <string name="theme_ui_mode_miuix">Miuix</string>

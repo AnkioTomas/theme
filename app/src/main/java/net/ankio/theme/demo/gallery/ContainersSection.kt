@@ -132,6 +132,7 @@ fun ContainersSection() {
         Caption("ThemeFloatingToolbar")
         ThemeFloatingToolbar(
             modifier = Modifier.fillMaxWidth(),
+            expandWidth = true,
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
             ThemeIconButton(onClick = {}) {

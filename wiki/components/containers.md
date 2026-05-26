@@ -47,11 +47,12 @@ ThemeFloatingToolbar {
 }
 ```
 
-子项默认水平居中、间距见 `ThemeFloatingToolbarDefaults`。需两端对齐时：
+子项默认水平居中、间距见 `ThemeFloatingToolbarDefaults`。默认宽度随内容；需铺满并两端对齐时：
 
 ```kotlin
 ThemeFloatingToolbar(
     modifier = Modifier.fillMaxWidth(),
+    expandWidth = true,
     horizontalArrangement = Arrangement.SpaceEvenly,
 ) { /* ... */ }
 ```

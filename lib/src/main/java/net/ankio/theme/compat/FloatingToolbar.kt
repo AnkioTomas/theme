@@ -16,7 +16,6 @@
 package net.ankio.theme.compat
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -58,8 +57,7 @@ object ThemeFloatingToolbarDefaults {
  * 内容默认在工具栏内 **水平居中** 排列（[ThemeFloatingToolbarDefaults.ContentArrangement]）；
  * 子项直接写在 lambda 内即可，无需再包一层 `Row`。
  *
- * 若需占满宽度并 `SpaceEvenly` 等布局，对 [modifier] 使用 `fillMaxWidth()`，
- * 并传入自定义 [horizontalArrangement]。
+ * 默认宽度随内容收缩（不占满父布局）。需铺满并 `SpaceEvenly` 等时设 [expandWidth] = true。
  */
 @Composable
 fun ThemeFloatingToolbar(
@@ -68,23 +66,21 @@ fun ThemeFloatingToolbar(
     cornerRadius: Dp = ThemeFloatingToolbarDefaults.CornerRadius,
     shadowElevation: Dp = ThemeFloatingToolbarDefaults.ShadowElevation,
     showDivider: Boolean = false,
+    expandWidth: Boolean = false,
     horizontalArrangement: Arrangement.Horizontal = ThemeFloatingToolbarDefaults.ContentArrangement,
     content: @Composable RowScope.() -> Unit,
 ) {
+    val rowModifier = Modifier
+        .padding(ThemeFloatingToolbarDefaults.ContentPadding)
+        .then(if (expandWidth) Modifier.fillMaxWidth() else Modifier)
+
     val toolbarBody: @Composable () -> Unit = {
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center,
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(ThemeFloatingToolbarDefaults.ContentPadding),
-                horizontalArrangement = horizontalArrangement,
-                verticalAlignment = Alignment.CenterVertically,
-                content = content,
-            )
-        }
+        Row(
+            modifier = rowModifier,
+            horizontalArrangement = horizontalArrangement,
+            verticalAlignment = Alignment.CenterVertically,
+            content = content,
+        )
     }
 
     when (LocalUiMode.current) {

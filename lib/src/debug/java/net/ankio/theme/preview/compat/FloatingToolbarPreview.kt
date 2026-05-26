@@ -7,9 +7,13 @@
 
 package net.ankio.theme.preview.compat
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import net.ankio.theme.AnkioTheme
 import net.ankio.theme.PreviewAll
@@ -27,7 +31,11 @@ private fun ThemeFloatingToolbarPreview(
     @PreviewParameter(ThemePreviewParameterProvider::class) config: ThemePreviewConfig,
 ) {
     PreviewHost(config) {
-        ThemeFloatingToolbar {
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center,
+        ) {
+            ThemeFloatingToolbar {
             ThemeIconButton(onClick = {}) {
                 ThemeIcon(
                     imageVector = Icons.Filled.Favorite,
@@ -46,6 +54,7 @@ private fun ThemeFloatingToolbarPreview(
                     contentDescription = null,
                     tint = AnkioTheme.colorScheme.primary,
                 )
+            }
             }
         }
     }

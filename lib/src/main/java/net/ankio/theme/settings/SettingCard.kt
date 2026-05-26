@@ -87,7 +87,7 @@ fun SettingCardPosition.toVerticalPadding(): Pair<Dp, Dp> = when (this) {
  * @param position 分组位置，Single 时独立圆角+间距，First/Middle/Last 时连在一起
  */
 @Composable
-internal fun SettingCard(
+fun SettingCard(
     icon: @Composable () -> Unit,
     title: String,
     modifier: Modifier = Modifier,

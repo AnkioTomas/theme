@@ -90,12 +90,15 @@ private fun UiSettingsScreenPreview(
  * 展示：UI 风格、颜色模式、跟随系统强调色、主题色选择。
  * 需在 [ThemeSettings.init] 后使用，配置由 theme 库直接管理。
  *
+ * @param scrollEnabled 为 `false` 时不应用内部 [verticalScroll] / [fillMaxHeight]，
+ *   供外层已提供滚动的页面嵌入使用。
  * @param onThemeChanged 主题变更后回调，如 setDefaultNightMode + activity.recreate()
  */
 @Composable
 fun UiSettingsScreen(
     options: UiSettingsOptions = UiSettingsOptions(),
     modifier: Modifier = Modifier,
+    scrollEnabled: Boolean = true,
     onThemeChanged: () -> Unit = {},
 ) {
     var uiMode by remember { mutableStateOf(ThemeSettings.uiMode) }
@@ -119,8 +122,13 @@ fun UiSettingsScreen(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .fillMaxHeight()
-            .verticalScroll(scrollState)
+            .then(
+                if (scrollEnabled) {
+                    Modifier.fillMaxHeight().verticalScroll(scrollState)
+                } else {
+                    Modifier
+                },
+            )
             .padding(16.dp),
     ) {
         SectionHeader(text = stringResource(R.string.theme_section_style))

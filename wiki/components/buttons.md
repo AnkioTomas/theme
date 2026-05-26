@@ -2,49 +2,66 @@
 
 包名：`net.ankio.theme.compat`
 
-## ThemePrimaryButton
+## ThemeButtonStyle
 
-主操作按钮，Miuix / Material 主色填充。
+| 风格 | 说明 |
+|------|------|
+| `Primary` | Miuix：`buttonColorsPrimary` + `onPrimary` 文案 |
+| `Secondary` | Miuix：`secondaryVariant` 底 + `onSurfaceContainer` 文案 |
+| `Custom(container, content, …)` | 容器色 / 文案色完全自定义 |
+
+## ThemePrimaryButton / ThemeSecondaryButton
+
+文案色在组件内注入，推荐 `ThemeButtonLabel` 或 `text` 重载，无需手写 `theme*ButtonContentColor()`。
 
 ```kotlin
-ThemePrimaryButton(onClick = { }) {
-    ThemeText(
-        text = "确认",
-        style = AnkioTheme.textStyles.button,
-        color = themePrimaryButtonContentColor(),
-    )
+ThemePrimaryButton(onClick = { }, text = "确认")
+
+ThemeSecondaryButton(onClick = { }) {
+    ThemeButtonLabel("取消")
 }
 ```
 
-## ThemeSecondaryButton
+高级自定义内容仍可用 `themePrimaryButtonContentColor()` / `themeSecondaryButtonContentColor()`。
 
-次要按钮，容器色背景。文案色请用 [themeSecondaryButtonContentColor]（Miuix 为 `onSurfaceContainer`）。
+## ThemeCustomButton
+
+不参与 Primary / Secondary 默认规则：
 
 ```kotlin
-ThemeSecondaryButton(onClick = { }) {
-    ThemeText(
-        text = "取消",
-        style = AnkioTheme.textStyles.button,
-        color = themeSecondaryButtonContentColor(),
-    )
-}
+ThemeCustomButton(
+    onClick = { },
+    containerColor = AnkioTheme.colorScheme.tertiaryContainer,
+    contentColor = AnkioTheme.colorScheme.onTertiaryContainer,
+    text = "自定义",
+)
 ```
 
 ## ThemeButtonGroup / ThemeGroupButton
 
-连体按钮组，按位置自动圆角。
+组内按钮通过 `style` 选择风格，默认 `Secondary`：
 
 ```kotlin
 ThemeButtonGroup {
-    ThemeGroupButton(onClick = {}, position = ButtonGroupPosition.Start) {
-        ThemeText("左")
-    }
-    ThemeGroupButton(onClick = {}, position = ButtonGroupPosition.Middle) {
-        ThemeText("中")
-    }
-    ThemeGroupButton(onClick = {}, position = ButtonGroupPosition.End) {
-        ThemeText("右")
-    }
+    ThemeGroupButton(
+        onClick = { },
+        text = "左",
+        position = ButtonGroupPosition.Start,
+        style = ThemeButtonStyle.Primary,
+    )
+    ThemeGroupButton(
+        onClick = { },
+        text = "中",
+        position = ButtonGroupPosition.Middle,
+        style = ThemeButtonStyle.Secondary,
+    )
+    ThemeGroupCustomButton(
+        onClick = { },
+        position = ButtonGroupPosition.End,
+        containerColor = Color.Red,
+        contentColor = Color.White,
+        text = "右",
+    )
 }
 ```
 

@@ -28,7 +28,7 @@ Compose 主题与组件库：在 **Miuix KMP** 与 **Material 3** 之间提供�
 - **统一令牌** — `AnkioTheme.colorScheme`、`AnkioTheme.textStyles`、语义色 `semantic.*`。
 - **40+ 兼容组件** — 按钮、表单、导航、弹窗、进度等，见 [组件索引](wiki/components/README.md)。
 - **内置设置页** — `UiSettingsScreen` 可嵌入，改主题后 `recreateForThemeChange()`。
-- **Overlay 能力** — `ThemeSheet.show(context)`、`ThemeToast`（悬浮窗，可降级系统 Toast）。
+- **Overlay 能力** — `ThemeSheet.show(context)`、`ThemeToast`（`TYPE_APPLICATION_OVERLAY`；Toast 可降级系统 Toast，Sheet 需悬浮窗权限）。
 - **8 主题预览** — `lib` debug 源集 `@PreviewAll`，覆盖 Miuix/Material × 浅/深/Monet。
 
 ---

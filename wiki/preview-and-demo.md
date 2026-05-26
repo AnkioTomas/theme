@@ -2,6 +2,20 @@
 
 ---
 
+## 预测性返回（Demo App）
+
+`app` 已开启 `android:enableOnBackInvokedCallback="true"`，并通过 `DemoPredictiveBackNavigation` 注册 `PredictiveBackHandler`：
+
+| 场景 | 返回行为 |
+|------|----------|
+| 组件分类详情 | 关闭详情（侧滑时内容随 `progress` 右移预览） |
+| 设置 Tab | 回到「组件」Tab |
+| 组件目录根页 | 系统返回桌面（预测性退出动画） |
+
+宿主接入参考：`androidx.activity:activity-compose` 的 `PredictiveBackHandler`，且勿在 `if` 内条件组合该 API。
+
+---
+
 ## @PreviewAll 系列
 
 8 种主题组合（Miuix/Material × Light/Dark/MonetLight/MonetDark）。

@@ -67,6 +67,18 @@ fun OverviewSection() {
                 color = AnkioTheme.colorScheme.onSurface,
             )
         }
+
+        ComponentSample(
+            name = "预测性返回",
+            api = "PredictiveBackHandler + enableOnBackInvokedCallback",
+            description = "分类详情：侧滑预览退出；设置 Tab：返回组件目录；根页：系统返回桌面动画。",
+        ) {
+            ThemeText(
+                text = "Android 13+ 边缘返回可预览；详情页随进度右移",
+                style = AnkioTheme.textStyles.body2,
+                color = AnkioTheme.colorScheme.onSurface,
+            )
+        }
     }
 
     SectionCard(title = "运行时状态") {

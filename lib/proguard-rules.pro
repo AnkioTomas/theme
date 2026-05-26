@@ -1,21 +1,13 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# =============================================================================
+# lib 模块自身 release 混淆（isMinifyEnabled = true 时生效）
+# =============================================================================
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+-include 'consumer-rules.pro'
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# 允许收缩未使用的 internal 实现（AnimatedSheetOverlay、OverlayWindow 等）
+-keep,allowobfuscation,allowshrinking class net.ankio.theme.sheet.AnimatedSheetOverlay { *; }
+-keep,allowobfuscation,allowshrinking class net.ankio.theme.sheet.OverlayWindowKt { *; }
+
+# debug 预览不参与 release 打包（仅 debug source set），无需 keep

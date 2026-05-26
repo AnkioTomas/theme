@@ -47,6 +47,8 @@ class MainActivity : BaseComposeActivity() {
 
 自动处理：Edge-to-Edge、夜模式、`AutoTheme`、`LocalUiMode`、根 `ThemeSurface`。
 
+预测性返回需在 Manifest 声明 `android:enableOnBackInvokedCallback="true"`，并在 Compose 中用 `PredictiveBackHandler` / `BackHandler` 处理自定义返回栈（见 Demo `MainActivity`）。
+
 主题变更后：
 
 ```kotlin
@@ -101,6 +103,20 @@ ThemeSettings.colorMode    // 0–6
 ThemeSettings.isDark
 ThemeSettings.getAppSettings()
 ```
+
+---
+
+## Release 混淆（R8 / ProGuard）
+
+库已附带 `lib/consumer-rules.pro`，宿主 App 开启 `isMinifyEnabled = true` 时会**自动合并**，一般无需再手写 keep。
+
+| 文件 | 作用 |
+|------|------|
+| `lib/consumer-rules.pro` | 随 AAR 下发：公开 API、Miuix、Overlay、资源等 |
+| `lib/proguard-rules.pro` | 仅 lib 自身开启混淆时使用 |
+| `app/proguard-rules.pro` | Demo 参考：`-include` consumer 规则 + Application/Activity |
+
+注意：`consumer-rules.pro` 中**不要**写 `-renamesourcefileattribute` 等全局项（应放在 App 的 `proguard-rules.pro`）。
 
 ---
 

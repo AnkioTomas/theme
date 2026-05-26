@@ -60,7 +60,7 @@ import top.yukonga.miuix.kmp.extra.WindowSpinner as MiuixWindowSpinner
  * 把弹窗右上角对齐到 anchor 右下角，向下展开；
  * 下方空间不够时翻转到 anchor 上方。与 Miuix Spinner 弹窗位置保持一致。
  */
-private class AnchorEndPopupPositionProvider(
+internal class AnchorEndPopupPositionProvider(
     private val verticalSpacingPx: Int,
 ) : PopupPositionProvider {
     override fun calculatePosition(

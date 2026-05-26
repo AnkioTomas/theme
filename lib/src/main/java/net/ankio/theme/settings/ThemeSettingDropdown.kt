@@ -16,7 +16,6 @@
 package net.ankio.theme.settings
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import net.ankio.theme.compat.ThemeSuperDropdown
@@ -45,7 +44,6 @@ fun ThemeSettingDropdown(
     position: SettingCardPosition = SettingCardPosition.Single,
     enabled: Boolean = true,
 ) {
-    val (topPad, bottomPad) = position.toVerticalPadding()
     ThemeSuperDropdown(
         items = items,
         selectedIndex = selectedIndex,
@@ -57,6 +55,6 @@ fun ThemeSettingDropdown(
         enabled = enabled,
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = topPad, bottom = bottomPad),
+            .settingGroupSpacing(position),
     )
 }

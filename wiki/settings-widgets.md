@@ -135,13 +135,58 @@ ThemeSettingTextField(
     summary = "用于通知",              // → supportingText
     placeholder = "name@example.com",
     startAction = { Icon(...) },       // → leadingIcon
+    fieldEndAction = {                 // → 框内 trailingIcon（如清除）
+        ThemeIconButton(onClick = { text = "" }) {
+            Icon(Icons.Filled.Clear, null, ...)
+        }
+    },
+    endAction = {                      // → 输入框右侧、卡片内（如扫码），与框间距 8dp
+        ThemeIconButton(onClick = { /* 扫码 */ }) {
+            Icon(Icons.Filled.QrCodeScanner, null, ...)
+        }
+    },
     position = SettingCardPosition.Single,
+    enabled = true,
     singleLine = true,
     maxLines = 1,
 )
 ```
 
-内部：`SettingCard` + `ThemeTextField(Filled)`。
+布局：圆角卡片内 `Row` = `ThemeTextField`（weight 1）+ 可选 `endAction`。
+
+| 参数 | 位置 |
+|------|------|
+| `fieldEndAction` | 输入框内部右侧（trailingIcon） |
+| `endAction` | 输入框**右侧**、仍在卡片内 |
+
+---
+
+## ThemeSettingComboField
+
+下拉输入框：视觉与 [ThemeSettingTextField](#themesettingtextfield) 一致，**只读**展示当前选项，点击输入区或右侧展开钮弹出列表。
+
+```kotlin
+ThemeSettingComboField(
+    items = listOf("默认", "蓝色", "绿色"),
+    selectedIndex = index,
+    onSelectedIndexChange = { index = it },
+    title = "主题色",
+    summary = "说明文字",
+    placeholder = "请选择",
+    startAction = { Icon(...) },
+    fieldEndAction = { /* 框内，如清除/重置 */ },
+    endAction = { /* 输入框右侧，如扫码 */ },
+    position = SettingCardPosition.Single,
+    enabled = true,
+)
+```
+
+| 引擎 | 下拉实现 |
+|------|----------|
+| Material | `ExposedDropdownMenuBox` + `ThemeTextField(readOnly)` |
+| Miuix | `ThemeTextField(readOnly)` + `Popup` 列表 |
+
+与 [ThemeSettingDropdown](#themesettingdropdown) 区别：后者为整行卡片点击弹出（`ThemeSuperDropdown`），本组件为**输入框形态**。
 
 ---
 

@@ -244,7 +244,9 @@ fun ThemeTextField(
                 )
                 if (supportingText != null) {
                     Spacer(modifier = Modifier.height(4.dp))
-                    supportingText()
+                    CompositionLocalProvider(LocalContentColor provides colors.onSurface) {
+                        supportingText()
+                    }
                 }
             }
         }

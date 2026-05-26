@@ -98,7 +98,7 @@ lib/src/debug/.../preview/compat/ButtonPreview.kt
 | 目录 | 内容 |
 |------|------|
 | `preview/compat/` | 全部 Theme* compat 预览 |
-| `preview/settings/` | SettingCard、ThemeSetting*、UiSettingsScreen |
+| `preview/settings/` | SettingCard、ThemeSetting*（含 TextField/Combo 框旁按钮）、UiSettingsScreen |
 | `preview/sheet/` | `ThemeBottomSheet`、`SheetContainer`（顶圆角 / 全圆角） |
 | `preview/toast/` | Toast 样式（非 overlay） |
 | `preview/ShapePreview.kt` | 形状令牌 |

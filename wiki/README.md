@@ -32,7 +32,7 @@ Compose 主题与组件库：**一套 `Theme*` API**，在 **Miuix KMP** 与 **M
 | 文档 | 说明 |
 |------|------|
 | [设置页组件](settings-widgets.md) | SettingCard、ThemeSetting*、`UiSettingsScreen` |
-| [底部弹层](sheet.md) | `ThemeSheet.show`、`ThemeBottomSheet` |
+| [底部弹层](sheet.md) | `ThemeSheet.show`、`ThemeBottomSheet`、`ThemeSheetShape` |
 | [Toast](toast.md) | `ThemeToast` 悬浮窗 |
 | [预览与 Demo](preview-and-demo.md) | `@PreviewAll`、`app` 演示目录 |
 

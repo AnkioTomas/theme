@@ -31,6 +31,7 @@ import net.ankio.theme.compat.ThemeIcon
 import net.ankio.theme.compat.ThemeIconButton
 import net.ankio.theme.preview.PreviewHost
 import net.ankio.theme.settings.SettingCardPosition
+import net.ankio.theme.settings.SettingInputMode
 import net.ankio.theme.settings.ThemeSettingTextField
 
 @PreviewAll
@@ -86,6 +87,51 @@ private fun ThemeSettingTextFieldWithActionsPreview(
             },
             modifier = Modifier.fillMaxWidth(),
         )
+    }
+}
+
+@PreviewAll
+@Composable
+private fun ThemeSettingTextFieldInputModesPreview(
+    @PreviewParameter(ThemePreviewParameterProvider::class) config: ThemePreviewConfig,
+) {
+    var password by remember { mutableStateOf("secret") }
+    var port by remember { mutableStateOf("8080") }
+    var ipv4 by remember { mutableStateOf("192.168.0") }
+    PreviewHost(config, contentPadding = 12.dp) {
+        Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
+            ThemeSettingTextField(
+                value = password,
+                onValueChange = { password = it },
+                title = "密码",
+                inputMode = SettingInputMode.Password,
+                startAction = { SettingFieldStartIcon(Icons.Filled.Email) },
+                position = SettingCardPosition.First,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            ThemeSettingTextField(
+                value = port,
+                onValueChange = { port = it },
+                title = "端口",
+                inputMode = SettingInputMode.Number,
+                startAction = { SettingFieldStartIcon(Icons.Filled.Email) },
+                position = SettingCardPosition.Middle,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            ThemeSettingTextField(
+                value = ipv4,
+                onValueChange = { ipv4 = it },
+                title = "IPv4",
+                summary = "校验说明",
+                inputMode = SettingInputMode.Pattern(
+                    pattern = """^(\d{1,3}\.){3}\d{1,3}$""",
+                    invalidMessage = "请输入合法 IPv4",
+                ),
+                startAction = { SettingFieldStartIcon(Icons.Filled.Email) },
+                position = SettingCardPosition.Last,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
     }
 }
 

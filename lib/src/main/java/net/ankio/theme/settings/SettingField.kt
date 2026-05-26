@@ -90,22 +90,33 @@ internal fun SettingFilledTextField(
     modifier: Modifier = Modifier,
     summary: String? = null,
     placeholder: String = "",
+    inputMode: SettingInputMode = SettingInputMode.Text,
     enabled: Boolean = true,
     readOnly: Boolean = false,
     singleLine: Boolean = true,
     maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
     trailingIcon: @Composable (() -> Unit)? = null,
 ) {
+    val isError = inputMode.isInputError(value)
+    val supportingText = when {
+        isError && inputMode is SettingInputMode.Pattern && inputMode.invalidMessage != null ->
+            settingFieldSummary(inputMode.invalidMessage, isError = true)
+
+        else -> settingFieldSummary(summary, isError = isError)
+    }
     ThemeTextField(
         value = value,
-        onValueChange = onValueChange,
+        onValueChange = { onValueChange(inputMode.filterInput(it)) },
         modifier = modifier.fillMaxWidth(),
         style = TextFieldStyle.Filled,
         label = title,
         placeholder = placeholder,
         leadingIcon = startAction,
         trailingIcon = trailingIcon,
-        supportingText = settingFieldSummary(summary),
+        supportingText = supportingText,
+        isError = isError,
+        visualTransformation = inputMode.toVisualTransformation(),
+        keyboardOptions = inputMode.toKeyboardOptions(),
         singleLine = singleLine,
         maxLines = maxLines,
         enabled = enabled,
@@ -181,13 +192,16 @@ internal fun SettingItemsPopup(
     }
 }
 
-internal fun settingFieldSummary(summary: String?): @Composable (() -> Unit)? =
+internal fun settingFieldSummary(
+    summary: String?,
+    isError: Boolean = false,
+): @Composable (() -> Unit)? =
     summary?.let { text ->
         {
             ThemeText(
                 text = text,
                 style = AnkioTheme.textStyles.footnote1,
-                color = AnkioTheme.colorScheme.onSurface,
+                color = if (isError) AnkioTheme.colorScheme.error else AnkioTheme.colorScheme.onSurface,
             )
         }
     }

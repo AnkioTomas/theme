@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import net.ankio.theme.AnkioTheme
 import net.ankio.theme.settings.SettingCard
 import net.ankio.theme.settings.SettingCardPosition
+import net.ankio.theme.settings.SettingInputMode
 import net.ankio.theme.compat.ThemeIconButton
 import net.ankio.theme.settings.ThemeSettingClick
 import net.ankio.theme.settings.ThemeSettingComboField
@@ -40,6 +41,9 @@ fun SettingsWidgetsSection() {
         var switchOn by remember { mutableStateOf(true) }
         var dropdownIndex by remember { mutableIntStateOf(0) }
         var text by remember { mutableStateOf("ankio@ankio.net") }
+        var password by remember { mutableStateOf("secret") }
+        var port by remember { mutableStateOf("8080") }
+        var ipv4 by remember { mutableStateOf("192.168.0") }
 
         ComponentSample(
             name = "SettingCard",
@@ -132,6 +136,54 @@ fun SettingsWidgetsSection() {
                 },
                 position = SettingCardPosition.Single,
             )
+        }
+
+        ComponentSample(
+            name = "ThemeSettingTextField · 输入模式",
+            api = "inputMode = Password | Number | Pattern(...)",
+            description = "密码遮罩、仅数字、正则校验（不匹配时错误态 + invalidMessage）。",
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                ThemeSettingTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    title = "密码",
+                    summary = "inputMode = Password",
+                    placeholder = "请输入密码",
+                    inputMode = SettingInputMode.Password,
+                    startAction = {
+                        Icon(Icons.Filled.Tune, null, tint = AnkioTheme.colorScheme.primary)
+                    },
+                    position = SettingCardPosition.First,
+                )
+                ThemeSettingTextField(
+                    value = port,
+                    onValueChange = { port = it },
+                    title = "端口",
+                    summary = "inputMode = Number",
+                    placeholder = "0–65535",
+                    inputMode = SettingInputMode.Number,
+                    startAction = {
+                        Icon(Icons.Filled.Tune, null, tint = AnkioTheme.colorScheme.primary)
+                    },
+                    position = SettingCardPosition.Middle,
+                )
+                ThemeSettingTextField(
+                    value = ipv4,
+                    onValueChange = { ipv4 = it },
+                    title = "IPv4",
+                    summary = "校验通过前显示说明",
+                    placeholder = "192.168.1.1",
+                    inputMode = SettingInputMode.Pattern(
+                        pattern = """^(\d{1,3}\.){3}\d{1,3}$""",
+                        invalidMessage = "请输入合法 IPv4 地址",
+                    ),
+                    startAction = {
+                        Icon(Icons.Filled.Tune, null, tint = AnkioTheme.colorScheme.primary)
+                    },
+                    position = SettingCardPosition.Last,
+                )
+            }
         }
 
         ComponentSample(

@@ -123,6 +123,31 @@ ThemeSettingDropdown(
 
 ---
 
+## SettingInputMode
+
+`ThemeSettingTextField` 的输入约束，默认 `SettingInputMode.Text`。
+
+| 模式 | 行为 |
+|------|------|
+| `Text` | 普通文本 |
+| `Password` | 密码遮罩 + 密码键盘 |
+| `Number` | 数字键盘，过滤非数字字符 |
+| `Pattern(regex, invalidMessage?)` | 非空且整串不匹配 [regex] 时错误态；有 `invalidMessage` 时覆盖 `summary` 并以错误色显示 |
+
+```kotlin
+inputMode = SettingInputMode.Password
+
+inputMode = SettingInputMode.Number
+
+inputMode = SettingInputMode.Pattern(
+    pattern = """^(\d{1,3}\.){3}\d{1,3}$""",
+    invalidMessage = "请输入合法 IPv4 地址",
+)
+// 或使用 Regex：SettingInputMode.Pattern(Regex("""..."""), invalidMessage = "...")
+```
+
+---
+
 ## ThemeSettingTextField
 
 输入类设置项：**图标与标题在输入框内部**。
@@ -134,6 +159,7 @@ ThemeSettingTextField(
     title = "邮箱",                    // → TextField label
     summary = "用于通知",              // → supportingText
     placeholder = "name@example.com",
+    inputMode = SettingInputMode.Text, // 见 SettingInputMode
     startAction = { Icon(...) },       // → leadingIcon
     fieldEndAction = {                 // → 框内 trailingIcon（如清除）
         ThemeIconButton(onClick = { text = "" }) {
@@ -156,6 +182,7 @@ ThemeSettingTextField(
 
 | 参数 | 位置 |
 |------|------|
+| `inputMode` | 键盘类型、遮罩、数字过滤、正则校验 |
 | `fieldEndAction` | 输入框内部右侧（trailingIcon） |
 | `endAction` | 输入框**右侧**、仍在卡片内 |
 

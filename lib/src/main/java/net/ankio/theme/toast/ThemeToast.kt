@@ -1,10 +1,6 @@
 /*
  * Copyright (C) 2026 ankio(ankio@ankio.net)
  * Licensed under the Apache License, Version 3.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-3.0
  */
 
 package net.ankio.theme.toast
@@ -47,8 +43,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
-import java.lang.ref.WeakReference
+import androidx.core.net.toUri
 import net.ankio.theme.ThemeSettings
+import net.ankio.theme.compose.OverlayLifecycleOwner
 import net.ankio.theme.appExtraColors
 import net.ankio.theme.colorSchemeFromSeed
 
@@ -69,47 +66,33 @@ object ThemeToast {
                     "top" -> Position.Top
                     "center" -> Position.Center
                     else -> Position.Bottom
-                }
+                },
             )
         }
     }
 
-    private const val DURATION_MS = 3000L
+    private const val DURATION_MS = 3_000L
     private const val EDGE_MARGIN_DP = 80
     private const val DEFAULT_SEED = 0xFF6750A4.toInt()
 
     private var appContext: Context? = null
     private val mainHandler = Handler(Looper.getMainLooper())
-
-    private var overlayRef: WeakReference<View>? = null
-    private var ownerRef: WeakReference<ComposeOverlayOwner>? = null
-    private var wmRef: WeakReference<WindowManager>? = null
-
+    private var session: OverlaySession? = null
     private val dismissRunnable = Runnable { dismissOverlay() }
 
     fun init(application: Application) {
         appContext = application.applicationContext
     }
 
-    /**
-     * 是否已授予悬浮窗权限（[Settings.canDrawOverlays]）。
-     * 没授权时 [show] 会降级为系统 [Toast]。
-     * 不传 [context] 时使用 [init] 注入的 application context；
-     * 若 [init] 也未调用，返回 false。
-     */
     fun hasOverlayPermission(context: Context? = appContext): Boolean {
         val ctx = context ?: return false
         return Settings.canDrawOverlays(ctx)
     }
 
-    /**
-     * 跳转到系统设置页让用户授予本应用悬浮窗权限。
-     * 调用方需自己处理回到 app 后的状态刷新（通常下次 onResume 重新检查 [hasOverlayPermission]）。
-     */
     fun requestOverlayPermission(context: Context) {
         val intent = Intent(
             Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-            Uri.parse("package:${context.packageName}"),
+            "package:${context.packageName}".toUri(),
         ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     }
@@ -140,8 +123,7 @@ object ThemeToast {
     ) {
         val wm = ctx.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val darkTheme = resolveDarkTheme(ctx)
-
-        val owner = ComposeOverlayOwner()
+        val owner = OverlayLifecycleOwner()
         val composeView = ComposeView(ctx).apply {
             owner.attach(this)
             setContent {
@@ -150,30 +132,22 @@ object ThemeToast {
                 }
             }
         }
-
         val params = buildLayoutParams(ctx, config)
         try {
             wm.addView(composeView, params)
-            overlayRef = WeakReference(composeView)
-            ownerRef = WeakReference(owner)
-            wmRef = WeakReference(wm)
+            session = OverlaySession(composeView, wm, owner)
             mainHandler.postDelayed(dismissRunnable, DURATION_MS)
-        } catch (e: Exception) {
-            owner.detach()
+        } catch (_: Exception) {
+            owner.destroy()
             Toast.makeText(ctx, message, Toast.LENGTH_SHORT).show()
         }
     }
 
-    /**
-     * 决定 Toast 使用浅色还是深色配色：
-     * 优先跟随 [ThemeSettings.shouldUseDarkTheme]（与 app 一致，包括用户强制 Light/Dark 的场景），
-     * 若 ThemeSettings 未初始化则回退到系统 uiMode flag。
-     */
     private fun resolveDarkTheme(ctx: Context): Boolean = runCatching {
         ThemeSettings.shouldUseDarkTheme(ctx)
     }.getOrElse {
         (ctx.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
-                Configuration.UI_MODE_NIGHT_YES
+            Configuration.UI_MODE_NIGHT_YES
     }
 
     private fun buildLayoutParams(ctx: Context, config: Config): WindowManager.LayoutParams =
@@ -182,9 +156,9 @@ object ThemeToast {
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
-                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-            PixelFormat.TRANSLUCENT
+                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            PixelFormat.TRANSLUCENT,
         ).apply {
             gravity = when (config.position) {
                 Position.Top -> Gravity.TOP or Gravity.CENTER_HORIZONTAL
@@ -202,30 +176,23 @@ object ThemeToast {
 
     private fun dismissOverlay() {
         mainHandler.removeCallbacks(dismissRunnable)
-        val view = overlayRef?.get()
-        val wm = wmRef?.get()
-        val owner = ownerRef?.get()
-
-        overlayRef = null
-        wmRef = null
-        ownerRef = null
-
-        if (view != null && wm != null) {
+        val current = session
+        session = null
+        current?.let { s ->
             runCatching {
-                if (view.isAttachedToWindow) wm.removeViewImmediate(view)
+                if (s.view.isAttachedToWindow) s.wm.removeViewImmediate(s.view)
             }
+            s.owner.destroy()
         }
-        owner?.detach()
     }
+
+    private data class OverlaySession(
+        val view: View,
+        val wm: WindowManager,
+        val owner: OverlayLifecycleOwner,
+    )
 }
 
-/**
- * Toast 视觉描述：图标 + 不透明饱和背景 + 白色前景，对应一个 [ThemeToast.Style]。
- *
- * 用 `text` 字段做不透明饱和背景（深色信号色）+ 白字，浮窗下不透下层界面，识别度高。
- * 与 demo `ThemeTokensSection.SemanticRow` 的"软色容器"刻意区分：toast 是抢眼提示，
- * 容器条是页内状态条，承担不同视觉权重。
- */
 @Immutable
 private data class ToastVisuals(
     val icon: ImageVector,

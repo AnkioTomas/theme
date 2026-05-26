@@ -132,35 +132,26 @@ fun ContainersSection() {
         Caption("ThemeFloatingToolbar")
         ThemeFloatingToolbar(
             modifier = Modifier.fillMaxWidth(),
-            color = AnkioTheme.colorScheme.surfaceContainer,
-            shadowElevation = 4.dp,
+            horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                ThemeIconButton(onClick = {}) {
-                    ThemeIcon(
-                        imageVector = Icons.Filled.ChevronLeft,
-                        contentDescription = null,
-                        tint = AnkioTheme.colorScheme.onSurface,
-                    )
-                }
-                ThemeText(
-                    text = "工具栏",
-                    style = AnkioTheme.textStyles.body1,
-                    color = AnkioTheme.colorScheme.onSurface,
+            ThemeIconButton(onClick = {}) {
+                ThemeIcon(
+                    imageVector = Icons.Filled.ChevronLeft,
+                    contentDescription = null,
+                    tint = AnkioTheme.colorScheme.onSurface,
                 )
-                ThemeIconButton(onClick = {}) {
-                    ThemeIcon(
-                        imageVector = Icons.Filled.ChevronRight,
-                        contentDescription = null,
-                        tint = AnkioTheme.colorScheme.onSurface,
-                    )
-                }
+            }
+            ThemeText(
+                text = "工具栏",
+                style = AnkioTheme.textStyles.body1,
+                color = AnkioTheme.colorScheme.onSurface,
+            )
+            ThemeIconButton(onClick = {}) {
+                ThemeIcon(
+                    imageVector = Icons.Filled.ChevronRight,
+                    contentDescription = null,
+                    tint = AnkioTheme.colorScheme.onSurface,
+                )
             }
         }
     }

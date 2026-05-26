@@ -16,7 +16,6 @@ import net.ankio.theme.AnkioTheme
 import net.ankio.theme.PreviewAll
 import net.ankio.theme.ThemePreviewConfig
 import net.ankio.theme.ThemePreviewParameterProvider
-import net.ankio.theme.compat.ThemeButtonLabel
 import net.ankio.theme.compat.ThemePrimaryButton
 import net.ankio.theme.compat.ThemeText
 import net.ankio.theme.preview.PreviewHost
@@ -34,12 +33,16 @@ private fun SheetContainerPreview(
                 style = AnkioTheme.textStyles.title3,
                 color = AnkioTheme.colorScheme.onSurface,
             )
+            ThemeText(
+                text = "底部弹层内容区",
+                style = AnkioTheme.textStyles.body2,
+                color = AnkioTheme.colorScheme.onSurfaceVariant,
+            )
             ThemePrimaryButton(
                 onClick = {},
                 text = "操作",
                 modifier = Modifier.fillMaxWidth(),
             )
-            ThemeButtonLabel("底部弹层内容区")
         }
     }
 }

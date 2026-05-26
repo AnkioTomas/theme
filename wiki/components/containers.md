@@ -41,12 +41,19 @@ ThemeCard(
 悬浮工具栏（Miuix / Material 各自实现）。
 
 ```kotlin
-ThemeFloatingToolbar(
-    modifier = Modifier,
-    containerColor = AnkioTheme.colorScheme.surfaceContainerHigh,
-) {
-    // 工具栏内容
+ThemeFloatingToolbar {
+    ThemeIconButton(onClick = {}) { /* icon */ }
+    ThemeText("工具栏", style = AnkioTheme.textStyles.body1, color = AnkioTheme.colorScheme.onSurface)
 }
+```
+
+子项默认水平居中、间距见 `ThemeFloatingToolbarDefaults`。需两端对齐时：
+
+```kotlin
+ThemeFloatingToolbar(
+    modifier = Modifier.fillMaxWidth(),
+    horizontalArrangement = Arrangement.SpaceEvenly,
+) { /* ... */ }
 ```
 
 ## Demo

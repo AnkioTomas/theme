@@ -15,11 +15,19 @@
 
 package net.ankio.theme.compat
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
@@ -30,19 +38,55 @@ import net.ankio.theme.UiMode
 import top.yukonga.miuix.kmp.basic.FloatingToolbar as MiuixFloatingToolbar
 import top.yukonga.miuix.kmp.basic.FloatingToolbarDefaults
 
+/** [ThemeFloatingToolbar] 默认尺寸与间距。 */
+object ThemeFloatingToolbarDefaults {
+    val CornerRadius: Dp = FloatingToolbarDefaults.CornerRadius
+    val ContentPadding: PaddingValues = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+    val ItemSpacing: Dp = 8.dp
+    val ShadowElevation: Dp = 4.dp
+
+    val ContentArrangement: Arrangement.Horizontal = Arrangement.spacedBy(
+        space = ItemSpacing,
+        alignment = Alignment.CenterHorizontally,
+    )
+}
+
 /**
  * 浮动工具栏兼容层。
  * Material 使用 Card 模拟，Miuix 使用 Miuix FloatingToolbar。
+ *
+ * 内容默认在工具栏内 **水平居中** 排列（[ThemeFloatingToolbarDefaults.ContentArrangement]）；
+ * 子项直接写在 lambda 内即可，无需再包一层 `Row`。
+ *
+ * 若需占满宽度并 `SpaceEvenly` 等布局，对 [modifier] 使用 `fillMaxWidth()`，
+ * 并传入自定义 [horizontalArrangement]。
  */
 @Composable
 fun ThemeFloatingToolbar(
     modifier: Modifier = Modifier,
     color: Color = AnkioTheme.colorScheme.surfaceContainer,
-    cornerRadius: Dp = FloatingToolbarDefaults.CornerRadius,
-    shadowElevation: Dp = 4.dp,
+    cornerRadius: Dp = ThemeFloatingToolbarDefaults.CornerRadius,
+    shadowElevation: Dp = ThemeFloatingToolbarDefaults.ShadowElevation,
     showDivider: Boolean = false,
-    content: @Composable () -> Unit,
+    horizontalArrangement: Arrangement.Horizontal = ThemeFloatingToolbarDefaults.ContentArrangement,
+    content: @Composable RowScope.() -> Unit,
 ) {
+    val toolbarBody: @Composable () -> Unit = {
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(ThemeFloatingToolbarDefaults.ContentPadding),
+                horizontalArrangement = horizontalArrangement,
+                verticalAlignment = Alignment.CenterVertically,
+                content = content,
+            )
+        }
+    }
+
     when (LocalUiMode.current) {
         UiMode.Material -> Card(
             modifier = modifier,
@@ -54,7 +98,7 @@ fun ThemeFloatingToolbar(
                     if (showDivider) {
                         ThemeHorizontalDivider()
                     }
-                    content()
+                    toolbarBody()
                 }
             },
         )
@@ -65,7 +109,8 @@ fun ThemeFloatingToolbar(
             cornerRadius = cornerRadius,
             shadowElevation = shadowElevation,
             showDivider = showDivider,
-            content = content,
+            outSidePadding = PaddingValues(),
+            content = toolbarBody,
         )
     }
 }

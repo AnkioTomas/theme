@@ -15,8 +15,9 @@ import net.ankio.theme.PreviewAllScreen
 import net.ankio.theme.PreviewAllThemes
 import net.ankio.theme.ThemePreviewConfig
 import net.ankio.theme.ThemePreviewParameterProvider
-import net.ankio.theme.compat.ThemeButtonLabel
+import net.ankio.theme.AnkioTheme
 import net.ankio.theme.compat.ThemePrimaryButton
+import net.ankio.theme.compat.ThemeText
 import net.ankio.theme.sheet.ThemeBottomSheet
 
 @PreviewAllScreen
@@ -26,7 +27,11 @@ private fun ThemeBottomSheetPreview(
 ) {
     PreviewAllThemes(config) {
         ThemeBottomSheet(onDismissRequest = {}) { dismiss ->
-            ThemeButtonLabel("ThemeBottomSheet")
+            ThemeText(
+                text = "ThemeBottomSheet",
+                style = AnkioTheme.textStyles.title3,
+                color = AnkioTheme.colorScheme.onSurface,
+            )
             ThemePrimaryButton(
                 onClick = dismiss,
                 text = "关闭",

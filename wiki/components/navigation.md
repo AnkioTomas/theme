@@ -1,78 +1,150 @@
 # 导航
 
+包名：`net.ankio.theme.compat`
+
+---
+
 ## ThemeTopAppBar
+
+顶部应用栏，支持大标题折叠。
 
 ```kotlin
 val scroll = rememberThemeTopAppBarScroll(collapseOnScroll = true)
 
 ThemeTopAppBar(
     title = "收起后标题",
-    largeTitle = "大标题", // 可折叠时显示
+    largeTitle = "大标题", // null 且 scroll 非 null 时等同 title
     titleAlignment = ThemeTopAppBarTitleAlignment.Center, // 或 Start
-    scroll = scroll, // null 不折叠
+    scroll = scroll, // null = 不折叠
     modifier = Modifier.fillMaxWidth(),
-    navigationIcon = { /* IconButton */ },
+    navigationIcon = { /* ThemeIconButton */ },
     actions = { /* RowScope */ },
 )
 ```
 
+| 参数 | 说明 |
+|------|------|
+| `title` | 小标题 / 收起后标题 |
+| `largeTitle` | 展开时大标题 |
+| `titleAlignment` | 收起后对齐；大标题区一般为起始对齐 |
+| `scroll` | `rememberThemeTopAppBarScroll` 返回值 |
+
 ### 滚动折叠
 
-列表需挂 `nestedScroll`：
-
 ```kotlin
+val scroll = rememberThemeTopAppBarScroll(collapseOnScroll = true)
+    ?: return
+
 LazyColumn(
     modifier = Modifier.nestedScroll(scroll.nestedScrollConnection),
-) { /* ... */ }
+) { /* items */ }
+
+ThemeTopAppBar(..., scroll = scroll)
 ```
 
 | API | 说明 |
 |-----|------|
-| `rememberThemeTopAppBarScroll(true)` | 创建 Miuix/Material 对应 scrollBehavior |
-| `ThemeTopAppBarScroll.nestedScrollConnection` | 传给 `Modifier.nestedScroll` |
+| `rememberThemeTopAppBarScroll(true)` | `false` 时返回 `null` |
+| `ThemeTopAppBarScroll.nestedScrollConnection` | 挂到可滚动容器 |
+| `ThemeTopAppBarScroll.isActive` | 是否启用折叠 |
 
-Material 折叠时会同步 **statusBar** 颜色（`surface` ↔ `surfaceContainer` 渐变）。
+### Miuix vs Material
 
-## ThemeNavigationBar / ThemeNavigationBarItem
+| 场景 | Material | Miuix |
+|------|----------|-------|
+| 可折叠 | `LargeTopAppBar` | `MiuixTopAppBar` + scrollBehavior |
+| 不可折叠 + 居中 | `CenterAlignedTopAppBar` | `MiuixSmallTopAppBar` |
+| 不可折叠 + 起始 | `TopAppBar` | `MiuixTopAppBar`（`largeTitle = null`） |
+| 状态栏 | 折叠时 `surface` → `surfaceContainer` 渐变 | 无同步（系统栏由 Activity 主题控制） |
+
+---
+
+## ThemeNavigationBar
+
+底部导航栏容器。
 
 ```kotlin
 ThemeNavigationBar(
     modifier = Modifier.fillMaxWidth(),
     containerColor = AnkioTheme.colorScheme.surface,
+    contentColor = AnkioTheme.colorScheme.onSurface,
     showDivider = true,
 ) {
     ThemeNavigationBarItem(
-        selected = selected == 0,
-        onClick = { selected = 0 },
+        selected = tab == 0,
+        onClick = { tab = 0 },
         icon = Icons.Filled.Home,
         label = "首页",
     )
 }
 ```
 
+| 引擎 | 差异 |
+|------|------|
+| Material | 可选顶部 `ThemeHorizontalDivider` + `NavigationBar` |
+| Miuix | `MiuixNavigationBar`（内置分割线选项） |
+
+---
+
+## ThemeNavigationBarItem
+
+`RowScope` 扩展；须在 `ThemeNavigationBar` 内使用。
+
+| 参数 | 说明 |
+|------|------|
+| `selected` | 选中态 |
+| `onClick` | |
+| `icon` | `ImageVector` |
+| `label` | 文案 |
+
+| 引擎 | 行为 |
+|------|------|
+| Material | `ThemeIcon` + `ThemeText`；选中 `primary` / 未选 `onSurfaceVariant`；指示器 `primaryContainer` |
+| Miuix | 原生 `MiuixNavigationBarItem`（传入 `icon` + `label`） |
+
+---
+
 ## ThemeNavigationRail
 
-大屏侧边导航。
+侧边导航（大屏/平板）。
 
 ```kotlin
 ThemeNavigationRail(
+    modifier = Modifier,
     containerColor = AnkioTheme.colorScheme.surface,
-    header = { /* 顶部 */ },
+    contentColor = AnkioTheme.colorScheme.onSurface,
+    header = { /* 顶部 Logo 等 */ },
+    showDivider = true,
+    minWidth = 80.dp,
 ) {
-    // items
+    // 自定义 item 内容
 }
 ```
 
+| 引擎 | 差异 |
+|------|------|
+| Material | `NavigationRail` + 可选右侧 `ThemeVerticalDivider` |
+| Miuix | `MiuixNavigationRail` |
+
+---
+
 ## ThemeTabRow
+
+顶部标签栏。
 
 ```kotlin
 ThemeTabRow(
     tabs = listOf("首页", "发现", "我的"),
-    selectedTabIndex = tabIndex,
-    onTabSelected = { tabIndex = it },
+    selectedTabIndex = index,
+    onTabSelected = { index = it },
+    modifier = Modifier.fillMaxWidth(),
 )
 ```
 
+Material `PrimaryTabRow` ↔ Miuix `MiuixTabRow`；文案过长时 Material 侧省略。
+
+---
+
 ## Demo
 
-`app` → **顶部栏**、**标签栏**、**底部导航**、**侧边导航**；主界面 `DemoAppShell` 演示 TopBar + BottomNav
+`app` → **顶部栏**、**标签栏**、**底部导航**、**侧边导航**；`DemoAppShell` 演示 TopBar + BottomNav

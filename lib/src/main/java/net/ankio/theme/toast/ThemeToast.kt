@@ -48,6 +48,7 @@ import net.ankio.theme.ThemeSettings
 import net.ankio.theme.compose.OverlayLifecycleOwner
 import net.ankio.theme.appExtraColors
 import net.ankio.theme.colorSchemeFromSeed
+import java.lang.ref.WeakReference
 
 object ThemeToast {
 
@@ -75,13 +76,13 @@ object ThemeToast {
     private const val EDGE_MARGIN_DP = 80
     private const val DEFAULT_SEED = 0xFF6750A4.toInt()
 
-    private var appContext: Context? = null
+    private var appContext: Application? = null
     private val mainHandler = Handler(Looper.getMainLooper())
     private var session: OverlaySession? = null
     private val dismissRunnable = Runnable { dismissOverlay() }
 
     fun init(application: Application) {
-        appContext = application.applicationContext
+        appContext = application
     }
 
     fun hasOverlayPermission(context: Context? = appContext): Boolean {
@@ -178,19 +179,24 @@ object ThemeToast {
         mainHandler.removeCallbacks(dismissRunnable)
         val current = session
         session = null
-        current?.let { s ->
-            runCatching {
-                if (s.view.isAttachedToWindow) s.wm.removeViewImmediate(s.view)
-            }
-            s.owner.destroy()
-        }
+        current?.detach()
     }
 
-    private data class OverlaySession(
-        val view: View,
-        val wm: WindowManager,
+    private class OverlaySession(
+        view: View,
+        private val wm: WindowManager,
         val owner: OverlayLifecycleOwner,
-    )
+    ) {
+        private val viewRef = WeakReference(view)
+
+        fun detach() {
+            runCatching {
+                val v = viewRef.get() ?: return@runCatching
+                if (v.isAttachedToWindow) wm.removeViewImmediate(v)
+            }
+            owner.destroy()
+        }
+    }
 }
 
 @Immutable

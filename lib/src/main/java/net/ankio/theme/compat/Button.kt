@@ -47,16 +47,6 @@ fun ThemeButtonLabel(
     )
 }
 
-/** 主按钮文案色（高级自定义内容时可选）。 */
-@Composable
-@ReadOnlyComposable
-fun themePrimaryButtonContentColor(): Color = resolveContentColor(ThemeButtonStyle.Primary)
-
-/** 次要 / 组内按钮文案色（高级自定义内容时可选）。 */
-@Composable
-@ReadOnlyComposable
-fun themeSecondaryButtonContentColor(): Color = resolveContentColor(ThemeButtonStyle.Secondary)
-
 @Composable
 fun ThemePrimaryButton(
     onClick: () -> Unit,

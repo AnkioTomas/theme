@@ -50,6 +50,7 @@ import net.ankio.theme.UiMode
 import net.ankio.theme.compose.OverlayLifecycleOwner
 import net.ankio.theme.util.findLifecycleOwner
 import net.ankio.theme.util.themed
+import java.lang.ref.WeakReference
 
 /**
  * 底部弹层：Compose 树内用 [ThemeBottomSheet]，任意 [Context] 用 [show]（纯 Compose Dialog，无 View Binding / XML）。
@@ -154,26 +155,36 @@ object ThemeSheet {
         mainHandler.post {
             val current = session ?: return@post
             session = null
-            current.host.lifecycle.removeObserver(current.observer)
-            runCatching {
-                when {
-                    current.parent != null -> current.parent.removeView(current.view)
-                    current.windowManager != null && current.view.isAttachedToWindow ->
-                        current.windowManager.removeViewImmediate(current.view)
-                }
-            }
-            current.owner.destroy()
+            current.detach()
         }
     }
 
-    private data class SheetSession(
-        val view: ComposeView,
-        val parent: ViewGroup?,
-        val windowManager: WindowManager?,
+    private class SheetSession(
+        view: ComposeView,
+        parent: ViewGroup?,
+        private val windowManager: WindowManager?,
         val owner: OverlayLifecycleOwner,
-        val observer: LifecycleEventObserver,
-        val host: LifecycleOwner,
-    )
+        private val observer: LifecycleEventObserver,
+        host: LifecycleOwner,
+    ) {
+        private val viewRef = WeakReference(view)
+        private val parentRef = parent?.let { WeakReference(it) }
+        private val hostRef = WeakReference(host)
+
+        fun detach() {
+            hostRef.get()?.lifecycle?.removeObserver(observer)
+            val view = viewRef.get()
+            runCatching {
+                when {
+                    view == null -> Unit
+                    parentRef?.get() != null -> parentRef.get()!!.removeView(view)
+                    windowManager != null && view.isAttachedToWindow ->
+                        windowManager.removeViewImmediate(view)
+                }
+            }
+            owner.destroy()
+        }
+    }
 }
 
 /** 已在 Compose 树内时使用 Material3 [ModalBottomSheet]。 */

@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
@@ -32,6 +33,8 @@ import net.ankio.theme.compat.ThemeTopAppBar
 import net.ankio.theme.compat.ThemeTopAppBarTitleAlignment
 import net.ankio.theme.compat.rememberThemeTopAppBarScroll
 import net.ankio.theme.compat.ButtonGroupPosition
+import net.ankio.theme.compat.ThemeButtonLabel
+import net.ankio.theme.compat.ThemeButtonStyle
 
 enum class DemoBottomTab(val label: String) {
     Catalog("组件"),
@@ -45,6 +48,7 @@ enum class DemoBottomTab(val label: String) {
 fun DemoAppShell(
     title: String,
     largeTitle: String,
+    topAppBarScrollKey: String,
     showBack: Boolean,
     onBack: () -> Unit,
     onRecreateTheme: () -> Unit,
@@ -57,7 +61,13 @@ fun DemoAppShell(
     modifier: Modifier = Modifier,
     content: @Composable (nestedScrollModifier: Modifier) -> Unit,
 ) {
-    val scroll = if (collapseOnScroll) rememberThemeTopAppBarScroll(collapseOnScroll = true) else null
+    val scroll = if (collapseOnScroll) {
+        key(topAppBarScrollKey) {
+            rememberThemeTopAppBarScroll(collapseOnScroll = true)
+        }
+    } else {
+        null
+    }
     val nestedScrollModifier = scroll?.nestedScrollConnection?.let { Modifier.nestedScroll(it) }
         ?: Modifier
 
@@ -147,6 +157,12 @@ private fun TitleAlignmentBar(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
     ) {
+        ThemeText(
+            text = "标题",
+            style = AnkioTheme.textStyles.footnote1,
+            color = AnkioTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.weight(1f, fill = false),
+        )
         ThemeButtonGroup {
             listOf(
                 ThemeTopAppBarTitleAlignment.Start to "居左",
@@ -159,16 +175,13 @@ private fun TitleAlignmentBar(
                 ThemeGroupButton(
                     onClick = { onValueChange(align) },
                     position = pos,
+                    style = if (value == align) {
+                        ThemeButtonStyle.Primary
+                    } else {
+                        ThemeButtonStyle.Secondary
+                    },
                 ) {
-                    ThemeText(
-                        text = label,
-                        style = AnkioTheme.textStyles.button,
-                        color = if (value == align) {
-                            AnkioTheme.colorScheme.onSurface
-                        } else {
-                            AnkioTheme.colorScheme.onSecondaryContainer
-                        },
-                    )
+                    ThemeButtonLabel(label)
                 }
             }
         }

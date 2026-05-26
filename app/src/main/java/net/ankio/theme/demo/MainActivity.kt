@@ -29,15 +29,13 @@ class MainActivity : BaseComposeActivity() {
             mutableStateOf(ThemeTopAppBarTitleAlignment.Center)
         }
 
-        val openCategoryName = currentRoute
-            ?.removePrefix("category/")
-            ?.takeIf { currentRoute.startsWith("category/") }
-        val openCategory = openCategoryName?.let { name ->
-            DemoCategory.entries.find { it.name == name }
-        }
+        // 带参路由的 destination.route 是模板（category/{categoryName}），须从 arguments 取实参
+        val openCategory = backStackEntry?.arguments
+            ?.getString("categoryName")
+            ?.let { name -> DemoCategory.entries.find { it.name == name } }
 
-        val onTopLevelTab = currentRoute == DemoRoutes.Catalog || currentRoute == DemoRoutes.Settings
-        val showBottomNavigation = onTopLevelTab
+        val onTopLevelTab = openCategory == null &&
+            (currentRoute == DemoRoutes.Catalog || currentRoute == DemoRoutes.Settings)
 
         val topTitle = when {
             openCategory != null -> openCategory.title
@@ -51,12 +49,18 @@ class MainActivity : BaseComposeActivity() {
             else -> "Theme 组件目录"
         }
 
-        val showTitleAlignmentPicker = currentRoute == DemoRoutes.Catalog
+        val showTitleAlignmentPicker = openCategory == null && currentRoute == DemoRoutes.Catalog
         val collapseOnScroll = currentRoute == DemoRoutes.Catalog || openCategory != null
+        val topAppBarScrollKey = when {
+            openCategory != null -> "category:${openCategory.name}"
+            currentRoute == DemoRoutes.Settings -> DemoRoutes.Settings
+            else -> DemoRoutes.Catalog
+        }
 
         DemoAppShell(
             title = topTitle,
             largeTitle = largeTitle,
+            topAppBarScrollKey = topAppBarScrollKey,
             showBack = navController.previousBackStackEntry != null,
             onBack = { navController.popBackStack() },
             onRecreateTheme = ::recreateForThemeChange,
@@ -67,7 +71,7 @@ class MainActivity : BaseComposeActivity() {
                 null
             },
             collapseOnScroll = collapseOnScroll,
-            showBottomNavigation = showBottomNavigation,
+            showBottomNavigation = onTopLevelTab,
             selectedTab = when (currentRoute) {
                 DemoRoutes.Settings -> DemoBottomTab.Settings
                 else -> DemoBottomTab.Catalog

@@ -81,10 +81,12 @@ fun ThemeTopAppBar(
                 scrollBehavior = materialScroll,
             )
             if (materialScroll != null) {
+                val expandedTitle = largeTitle ?: title
                 LargeTopAppBar(
                     title = {
+                        val collapsed = materialScroll.state.collapsedFraction > 0.5f
                         MaterialCollapsedTitle(
-                            text = title,
+                            text = if (collapsed) title else expandedTitle,
                             alignment = titleAlignment,
                             color = colors.onSurface,
                         )

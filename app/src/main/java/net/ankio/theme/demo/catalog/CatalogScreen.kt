@@ -44,7 +44,7 @@ fun CatalogScreen(
         item(key = "header") {
             DemoPageHeader(
                 title = "滚动列表",
-                description = "上滑时顶部大标题会折叠。返回本页时列表位置会保留（LazyListState 由主界面 rememberSaveable 持有）。",
+                description = "上滑时顶部大标题会折叠。返回本页时列表位置会保留（LazyListState 绑定 Nav 返回栈条目）。",
             )
         }
 

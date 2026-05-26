@@ -5,7 +5,6 @@
 package net.ankio.theme.demo
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,10 +27,6 @@ class MainActivity : BaseComposeActivity() {
 
         var titleAlignment by rememberSaveable {
             mutableStateOf(ThemeTopAppBarTitleAlignment.Center)
-        }
-
-        val catalogListState = rememberSaveable(saver = LazyListState.Saver) {
-            LazyListState()
         }
 
         val openCategoryName = currentRoute
@@ -93,7 +88,6 @@ class MainActivity : BaseComposeActivity() {
         ) { nestedScrollModifier ->
             DemoNavHost(
                 navController = navController,
-                catalogListState = catalogListState,
                 nestedScrollModifier = nestedScrollModifier,
                 onRecreateTheme = ::recreateForThemeChange,
                 modifier = Modifier.fillMaxSize(),

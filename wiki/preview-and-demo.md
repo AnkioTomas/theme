@@ -4,15 +4,18 @@
 
 ## 预测性返回（Demo App）
 
-`app` 已开启 `android:enableOnBackInvokedCallback="true"`，并通过 `DemoPredictiveBackNavigation` 注册 `PredictiveBackHandler`：
+与 [Android 官方指南](https://developer.android.com/guide/navigation/custom-back/predictive-back-gesture) 一致：
 
-| 场景 | 返回行为 |
-|------|----------|
-| 组件分类详情 | 关闭详情（侧滑时内容随 `progress` 右移预览） |
-| 设置 Tab | 回到「组件」Tab |
-| 组件目录根页 | 系统返回桌面（预测性退出动画） |
+1. Manifest：`android:enableOnBackInvokedCallback="true"`
+2. **Navigation Compose** `NavHost` 管理 `catalog` / `settings` / `category/{name}` 返回栈
+3. 根目的地 `catalog` 无自定义 `BackHandler` → 系统「返回主屏幕」预测动画（Android 15+ 默认启用）
+4. 仅当需要**自定义**滑动进度动画时，才在局部使用 `PredictiveBackHandler`（Demo 未使用手写位移）
 
-宿主接入参考：`androidx.activity:activity-compose` 的 `PredictiveBackHandler`，且勿在 `if` 内条件组合该 API。
+| 场景 | 行为 |
+|------|------|
+| 分类详情 | `navController.popBackStack()` + Nav 默认 slide 转场 |
+| 设置 Tab | `navigate(catalog)` 单顶恢复状态 |
+| 组件目录 | 系统处理返回 |
 
 ---
 

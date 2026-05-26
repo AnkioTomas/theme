@@ -5,7 +5,6 @@
 package net.ankio.theme.demo
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -13,21 +12,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import net.ankio.theme.BaseComposeActivity
 import net.ankio.theme.compat.ThemeTopAppBarTitleAlignment
-import net.ankio.theme.demo.catalog.CatalogScreen
-import net.ankio.theme.demo.catalog.CategoryDetailScreen
 import net.ankio.theme.demo.catalog.DemoCategory
-import net.ankio.theme.settings.UiSettingsScreen
 
 class MainActivity : BaseComposeActivity() {
 
     @Composable
     override fun Content() {
-        var bottomTab by rememberSaveable { mutableStateOf(DemoBottomTab.Catalog) }
-        var openCategory by rememberSaveable { mutableStateOf<DemoCategory?>(null) }
+        val navController = rememberNavController()
+        val backStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = backStackEntry?.destination?.route
+
         var titleAlignment by rememberSaveable {
             mutableStateOf(ThemeTopAppBarTitleAlignment.Center)
         }
@@ -36,80 +34,70 @@ class MainActivity : BaseComposeActivity() {
             LazyListState()
         }
 
-        DemoPredictiveBackNavigation(
-            openCategory = openCategory != null,
-            onSettingsTab = bottomTab == DemoBottomTab.Settings,
-            onPopCategory = { openCategory = null },
-            onLeaveSettingsTab = { bottomTab = DemoBottomTab.Catalog },
-        ) { categoryBackProgress ->
-            val topTitle = when {
-                openCategory != null -> openCategory!!.title
-                bottomTab == DemoBottomTab.Settings -> "主题设置"
-                else -> "Theme Demo"
-            }
+        val openCategoryName = currentRoute
+            ?.removePrefix("category/")
+            ?.takeIf { currentRoute.startsWith("category/") }
+        val openCategory = openCategoryName?.let { name ->
+            DemoCategory.entries.find { it.name == name }
+        }
 
-            val largeTitle = when {
-                openCategory != null -> openCategory!!.title
-                bottomTab == DemoBottomTab.Settings -> "主题设置"
-                else -> "Theme 组件目录"
-            }
+        val onTopLevelTab = currentRoute == DemoRoutes.Catalog || currentRoute == DemoRoutes.Settings
+        val showBottomNavigation = onTopLevelTab
 
-            val showTitleAlignmentPicker = openCategory == null && bottomTab == DemoBottomTab.Catalog
-            val collapseOnScroll = openCategory != null || bottomTab == DemoBottomTab.Catalog
+        val topTitle = when {
+            openCategory != null -> openCategory.title
+            currentRoute == DemoRoutes.Settings -> "主题设置"
+            else -> "Theme Demo"
+        }
 
-            DemoAppShell(
-                title = topTitle,
-                largeTitle = largeTitle,
-                showBack = openCategory != null,
-                onBack = { openCategory = null },
-                onRecreateTheme = ::recreateForThemeChange,
-                titleAlignment = titleAlignment,
-                onTitleAlignmentChange = if (showTitleAlignmentPicker) {
-                    { titleAlignment = it }
-                } else {
-                    null
-                },
-                collapseOnScroll = collapseOnScroll,
-                showBottomNavigation = openCategory == null,
-                selectedTab = bottomTab,
-                onTabSelected = { tab ->
-                    bottomTab = tab
-                    openCategory = null
-                },
-            ) { nestedScrollModifier ->
-                val predictiveModifier = if (openCategory != null) {
-                    Modifier.graphicsLayer {
-                        translationX = size.width * categoryBackProgress * 0.35f
-                        alpha = 1f - categoryBackProgress * 0.12f
+        val largeTitle = when {
+            openCategory != null -> openCategory.title
+            currentRoute == DemoRoutes.Settings -> "主题设置"
+            else -> "Theme 组件目录"
+        }
+
+        val showTitleAlignmentPicker = currentRoute == DemoRoutes.Catalog
+        val collapseOnScroll = currentRoute == DemoRoutes.Catalog || openCategory != null
+
+        DemoAppShell(
+            title = topTitle,
+            largeTitle = largeTitle,
+            showBack = navController.previousBackStackEntry != null,
+            onBack = { navController.popBackStack() },
+            onRecreateTheme = ::recreateForThemeChange,
+            titleAlignment = titleAlignment,
+            onTitleAlignmentChange = if (showTitleAlignmentPicker) {
+                { titleAlignment = it }
+            } else {
+                null
+            },
+            collapseOnScroll = collapseOnScroll,
+            showBottomNavigation = showBottomNavigation,
+            selectedTab = when (currentRoute) {
+                DemoRoutes.Settings -> DemoBottomTab.Settings
+                else -> DemoBottomTab.Catalog
+            },
+            onTabSelected = { tab ->
+                val route = when (tab) {
+                    DemoBottomTab.Catalog -> DemoRoutes.Catalog
+                    DemoBottomTab.Settings -> DemoRoutes.Settings
+                }
+                navController.navigate(route) {
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
                     }
-                } else {
-                    Modifier
+                    launchSingleTop = true
+                    restoreState = true
                 }
-
-                when {
-                    openCategory != null -> CategoryDetailScreen(
-                        category = openCategory!!,
-                        nestedScrollModifier = nestedScrollModifier,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .then(predictiveModifier),
-                    )
-
-                    bottomTab == DemoBottomTab.Settings -> UiSettingsScreen(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 8.dp),
-                        onThemeChanged = ::recreateForThemeChange,
-                    )
-
-                    else -> CatalogScreen(
-                        listState = catalogListState,
-                        nestedScrollModifier = nestedScrollModifier,
-                        onOpenCategory = { openCategory = it },
-                        modifier = Modifier.fillMaxSize(),
-                    )
-                }
-            }
+            },
+        ) { nestedScrollModifier ->
+            DemoNavHost(
+                navController = navController,
+                catalogListState = catalogListState,
+                nestedScrollModifier = nestedScrollModifier,
+                onRecreateTheme = ::recreateForThemeChange,
+                modifier = Modifier.fillMaxSize(),
+            )
         }
     }
 }

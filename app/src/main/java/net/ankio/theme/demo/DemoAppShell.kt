@@ -170,7 +170,7 @@ private fun TitleAlignmentBar(
                         text = label,
                         style = AnkioTheme.textStyles.button,
                         color = if (value == align) {
-                            AnkioTheme.colorScheme.onPrimary
+                            AnkioTheme.colorScheme.onSurface
                         } else {
                             AnkioTheme.colorScheme.onSecondaryContainer
                         },

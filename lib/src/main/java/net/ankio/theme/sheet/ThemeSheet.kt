@@ -5,253 +5,275 @@
 
 package net.ankio.theme.sheet
 
-import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
+import android.content.Intent
 import android.graphics.PixelFormat
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.view.ViewGroup
+import android.provider.Settings
+import android.view.KeyEvent
 import android.view.WindowManager
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
+import androidx.core.net.toUri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleService
 import net.ankio.theme.AnkioTheme
 import net.ankio.theme.AutoTheme
 import net.ankio.theme.LocalUiMode
 import net.ankio.theme.ThemeSettings
 import net.ankio.theme.UiMode
 import net.ankio.theme.compose.OverlayLifecycleOwner
-import net.ankio.theme.util.findLifecycleOwner
-import net.ankio.theme.util.themed
 import java.lang.ref.WeakReference
 
 /**
- * 底部弹层：Compose 树内用 [ThemeBottomSheet]，任意 [Context] 用 [show]（纯 Compose Dialog，无 View Binding / XML）。
+ * 全局底部弹层：统一使用 WindowManager (TYPE_APPLICATION_OVERLAY) 实现。
+ * 注意：调用方必须拥有 SYSTEM_ALERT_WINDOW (悬浮窗) 权限。
  */
 object ThemeSheet {
 
     private val mainHandler = Handler(Looper.getMainLooper())
     private var session: SheetSession? = null
 
+    private fun Context.findLifecycleOwner(): LifecycleOwner {
+        var current: Context? = this
+        while (current != null) {
+            if (current is LifecycleOwner) return current
+            current = (current as? ContextWrapper)?.baseContext
+        }
+        error("无法从 Context 找到 LifecycleOwner")
+    }
+
+    fun hasOverlayPermission(context: Context): Boolean =
+        Settings.canDrawOverlays(context.applicationContext)
+
+    fun requestOverlayPermission(context: Context) {
+        val pkg = context.applicationContext.packageName
+        val intent = Intent(
+            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+            "package:$pkg".toUri(),
+        ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    }
+
     /**
-     * 从 Activity / Service 等调起底部弹层。
-     *
-     * ```
-     * ThemeSheet.show(context) { dismiss ->
-     *     ThemeText("标题")
-     *     ThemePrimaryButton(onClick = dismiss) { ThemeText("关闭") }
-     * }
-     * ```
+     * @param context 任意带 [LifecycleOwner] 的 Context（Activity/Service 均可）。
+     * @param onShowFailed 无悬浮窗权限或 [WindowManager.addView] 失败时回调（不会调用 [onDismiss]）。
      */
     fun show(
         context: Context,
+        shape: ThemeSheetShape = ThemeSheetShape.TopRounded,
         cancelable: Boolean = true,
         onDismiss: () -> Unit = {},
+        onShowFailed: () -> Unit = {},
         content: @Composable (dismiss: () -> Unit) -> Unit,
     ) {
         mainHandler.post {
             val host = runCatching { context.findLifecycleOwner() }.getOrNull() ?: return@post
             if (host.lifecycle.currentState == Lifecycle.State.DESTROYED) return@post
-
-            val themed = context.themed()
-            val activity = themed as? Activity
-            if (activity != null && (activity.isFinishing || activity.isDestroyed)) return@post
-
-            dismiss()
-
-            val owner = OverlayLifecycleOwner()
-            var dismissed = false
-            val dismissAction: () -> Unit = {
-                if (!dismissed) {
-                    dismissed = true
-                    dismiss()
-                    onDismiss()
-                }
+            if (!hasOverlayPermission(context)) {
+                onShowFailed()
+                return@post
             }
 
-            val composeView = ComposeView(themed).apply {
-                setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindow)
-                owner.attach(this)
-                setContent {
-                    SheetTheme {
-                        ContextSheetDialog(
-                            cancelable = cancelable,
-                            onDismissRequest = dismissAction,
-                            content = content,
-                        )
-                    }
-                }
-            }
+            detachCurrentSession()
 
             val observer = LifecycleEventObserver { _, event ->
-                if (event == Lifecycle.Event.ON_DESTROY) dismissAction()
+                if (event == Lifecycle.Event.ON_DESTROY) detachCurrentSession()
             }
             host.lifecycle.addObserver(observer)
 
-            val newSession = when {
-                activity != null -> {
-                    val root = activity.window.decorView as ViewGroup
-                    root.addView(
-                        composeView,
-                        ViewGroup.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                        ),
-                    )
-                    SheetSession(composeView, root, null, owner, observer, host)
-                }
-                host is LifecycleService -> {
-                    val wm = themed.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-                    val params = WindowManager.LayoutParams(
-                        WindowManager.LayoutParams.MATCH_PARENT,
-                        WindowManager.LayoutParams.MATCH_PARENT,
-                        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
-                            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                        PixelFormat.TRANSLUCENT,
-                    )
-                    wm.addView(composeView, params)
-                    SheetSession(composeView, null, wm, owner, observer, host)
-                }
-                else -> {
-                    owner.destroy()
-                    host.lifecycle.removeObserver(observer)
-                    return@post
-                }
-            }
-
-            session = newSession
+            session = showFloatingWindow(
+                context = context,
+                shape = shape,
+                cancelable = cancelable,
+                onDismiss = onDismiss,
+                onShowFailed = onShowFailed,
+                content = content,
+                observer = observer,
+                host = host,
+            )
         }
     }
 
     fun dismiss() {
-        mainHandler.post {
-            val current = session ?: return@post
-            session = null
-            current.detach()
-        }
+        mainHandler.post { session?.requestDismiss() ?: detachCurrentSession() }
     }
 
-    private class SheetSession(
-        view: ComposeView,
-        parent: ViewGroup?,
-        private val windowManager: WindowManager?,
-        val owner: OverlayLifecycleOwner,
-        private val observer: LifecycleEventObserver,
-        host: LifecycleOwner,
-    ) {
-        private val viewRef = WeakReference(view)
-        private val parentRef = parent?.let { WeakReference(it) }
-        private val hostRef = WeakReference(host)
+    private fun detachCurrentSession() {
+        session?.detach()
+        session = null
+    }
 
-        fun detach() {
-            hostRef.get()?.lifecycle?.removeObserver(observer)
-            val view = viewRef.get()
-            runCatching {
-                when {
-                    view == null -> Unit
-                    parentRef?.get() != null -> parentRef.get()!!.removeView(view)
-                    windowManager != null && view.isAttachedToWindow ->
-                        windowManager.removeViewImmediate(view)
+    private fun showFloatingWindow(
+        context: Context,
+        shape: ThemeSheetShape,
+        cancelable: Boolean,
+        onDismiss: () -> Unit,
+        onShowFailed: () -> Unit,
+        content: @Composable (dismiss: () -> Unit) -> Unit,
+        observer: LifecycleEventObserver,
+        host: LifecycleOwner,
+    ): SheetSession {
+        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val overlayOwner = OverlayLifecycleOwner()
+        val visibleState = mutableStateOf(false)
+        lateinit var sheetSession: SheetSession
+
+        val composeView = ComposeView(context).apply {
+            setupOverlayEdgeToEdge()
+            overlayOwner.attach(this)
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindow)
+            setContent {
+                SheetTheme {
+                    val visible by visibleState
+                    AnimatedSheetOverlay(
+                        visible = visible,
+                        shape = shape,
+                        cancelable = cancelable,
+                        onDismissRequest = { sheetSession.requestDismiss() },
+                        onExitComplete = {
+                            mainHandler.post {
+                                if (session === sheetSession) detachCurrentSession()
+                            }
+                        },
+                        content = content,
+                    )
                 }
             }
-            owner.destroy()
+        }
+
+        // 设置悬浮窗布局参数
+        val windowType =
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+
+        val layoutParams = WindowManager.LayoutParams(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.MATCH_PARENT,
+            windowType,
+            WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            PixelFormat.TRANSLUCENT,
+        ).apply {
+            applyOverlayEdgeToEdge()
+        }
+
+        // 拦截物理返回键
+        if (cancelable) {
+            composeView.isFocusableInTouchMode = true
+            composeView.requestFocus()
+            composeView.setOnKeyListener { _, keyCode, event ->
+                if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
+                    sheetSession.requestDismiss()
+                    true
+                } else {
+                    false
+                }
+            }
+        }
+
+        sheetSession = SheetSession(
+            composeView = composeView,
+            windowManager = windowManager,
+            overlayOwner = overlayOwner,
+            visibleState = visibleState,
+            onDetach = {
+                host.lifecycle.removeObserver(observer)
+                onDismiss()
+            },
+        )
+
+        // 尝试挂载视图（防备无悬浮窗权限导致 Crash）
+        runCatching {
+            windowManager.addView(composeView, layoutParams)
+        }.onFailure {
+            overlayOwner.destroy()
+            host.lifecycle.removeObserver(observer)
+            onShowFailed()
+            return SheetSession()
+        }
+
+        composeView.post { visibleState.value = true }
+
+        session = sheetSession
+        return sheetSession
+    }
+
+    /**
+     * 持有当前展示状态的弱引用与相关资源。
+     * 提供 [detach] 方法进行统一清理。
+     */
+    private class SheetSession(
+        composeView: ComposeView? = null,
+        private val windowManager: WindowManager? = null,
+        private val overlayOwner: OverlayLifecycleOwner? = null,
+        private val visibleState: MutableState<Boolean>? = null,
+        private val onDetach: (() -> Unit)? = null,
+    ) {
+        private val viewRef = composeView?.let { WeakReference(it) }
+        private var detached = false
+
+        fun requestDismiss() {
+            if (detached) return
+            visibleState?.value = false
+        }
+
+        fun detach() {
+            if (detached) return
+            detached = true
+            onDetach?.invoke()
+            viewRef?.get()?.let { view ->
+                runCatching {
+                    if (windowManager != null && view.isAttachedToWindow) {
+                        windowManager.removeViewImmediate(view)
+                    }
+                }
+            }
+            overlayOwner?.destroy()
         }
     }
 }
 
-/** 已在 Compose 树内时使用 Material3 [ModalBottomSheet]。 */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ThemeBottomSheet(
     onDismissRequest: () -> Unit,
+    shape: ThemeSheetShape = ThemeSheetShape.TopRounded,
     content: @Composable ColumnScope.(dismiss: () -> Unit) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val shape = RoundedCornerShape(
-        topStart = ThemeSheetTopCorner,
-        topEnd = ThemeSheetTopCorner,
-    )
+    val sheetModifier = when (shape) {
+        ThemeSheetShape.TopRounded -> Modifier
+        ThemeSheetShape.FullyRounded -> Modifier
+            .padding(horizontal = ThemeSheetFullyRoundedHorizontalMargin)
+            .padding(bottom = ThemeSheetFullyRoundedBottomMargin)
+    }
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
-        shape = shape,
+        modifier = sheetModifier,
+        shape = sheetShape(shape),
         containerColor = AnkioTheme.colorScheme.surfaceContainerHigh,
     ) {
         ThemeSheetBody(onDismissRequest, content)
-    }
-}
-
-/** [ThemeSheet.show]：全屏 Compose [Dialog] + 底部 [SheetContainer]。 */
-@Composable
-private fun ContextSheetDialog(
-    cancelable: Boolean,
-    onDismissRequest: () -> Unit,
-    content: @Composable (dismiss: () -> Unit) -> Unit,
-) {
-    Dialog(
-        onDismissRequest = {
-            if (cancelable) onDismissRequest()
-        },
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false,
-            decorFitsSystemWindows = false,
-            dismissOnBackPress = cancelable,
-            dismissOnClickOutside = false,
-        ),
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .imePadding(),
-        ) {
-            if (cancelable) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.32f))
-                        .clickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() },
-                            onClick = onDismissRequest,
-                        ),
-                )
-            }
-            Column(
-                modifier = Modifier.align(Alignment.BottomCenter),
-            ) {
-                SheetContainer {
-                    content(onDismissRequest)
-                }
-            }
-        }
     }
 }
 
@@ -261,7 +283,7 @@ private fun ThemeSheetBody(
     content: @Composable ColumnScope.(dismiss: () -> Unit) -> Unit,
 ) {
     Column(
-        modifier = Modifier
+        Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp, vertical = 20.dp)
             .navigationBarsPadding(),
@@ -270,6 +292,7 @@ private fun ThemeSheetBody(
     }
 }
 
+/** Compose 主题壳。 */
 @Composable
 private fun SheetTheme(content: @Composable () -> Unit) {
     CompositionLocalProvider(LocalUiMode provides UiMode.fromValue(ThemeSettings.uiMode)) {

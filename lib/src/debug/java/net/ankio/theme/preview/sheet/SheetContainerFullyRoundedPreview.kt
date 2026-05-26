@@ -24,18 +24,18 @@ import net.ankio.theme.sheet.ThemeSheetShape
 
 @PreviewAll
 @Composable
-private fun SheetContainerPreview(
+private fun SheetContainerFullyRoundedPreview(
     @PreviewParameter(ThemePreviewParameterProvider::class) config: ThemePreviewConfig,
 ) {
     PreviewHost(config, contentPadding = 0.dp) {
-        SheetContainer(shape = ThemeSheetShape.TopRounded) {
+        SheetContainer(shape = ThemeSheetShape.FullyRounded) {
             ThemeText(
-                text = "SheetContainer · 顶圆角",
+                text = "SheetContainer · 全圆角",
                 style = AnkioTheme.textStyles.title3,
                 color = AnkioTheme.colorScheme.onSurface,
             )
             ThemeText(
-                text = "底部弹层内容区",
+                text = "四角 48dp · 左右留白",
                 style = AnkioTheme.textStyles.body2,
                 color = AnkioTheme.colorScheme.onSurfaceVariant,
             )

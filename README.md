@@ -258,7 +258,7 @@ ThemeButtonGroup {
 
 ```kotlin
 ThemeFloatingActionButton(onClick = { }) {
-    ThemeIcon(Icons.Filled.Add, null, tint = AnkioTheme.colorScheme.onPrimary)
+    ThemeIcon(Icons.Filled.Add, null, tint = AnkioTheme.colorScheme.onPrimaryContainer)
 }
 ```
 

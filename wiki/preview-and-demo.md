@@ -1,8 +1,14 @@
 # 预览与 Demo
 
-## @PreviewAll
+## @PreviewAll / @PreviewAllTall / @PreviewAllScreen
 
-8 种主题组合（Miuix/Material × Light/Dark/MonetLight/MonetDark）：
+8 种主题组合（Miuix/Material × Light/Dark/MonetLight/MonetDark）。注解自带 Studio 视口尺寸，避免单组件预览缩成一小块：
+
+| 注解 | 视口 | 用途 |
+|------|------|------|
+| `@PreviewAll` | 390×320 dp | 单个控件、设置项 |
+| `@PreviewAllTall` | 390×560 dp | 多行排版、色板、多条 Toast |
+| `@PreviewAllScreen` | 390×844 dp | 整页（`UiSettingsScreen`、BottomSheet） |
 
 ```kotlin
 @PreviewAll
@@ -10,13 +16,26 @@
 private fun MyPreview(
     @PreviewParameter(ThemePreviewParameterProvider::class) config: ThemePreviewConfig,
 ) {
-    PreviewAllThemes(config) {
+    PreviewHost(config) {
         MyContent()
     }
 }
 ```
 
-不依赖 `SharedPreferences`，适合 Android Studio 预览。
+主题色由 `ThemePreviewConfig.appSettings` 注入；`PreviewAllThemes` 会调用 `ThemeSettings.init`（预览沙箱 SP）。
+
+### lib 组件预览（一组件一 Preview）
+
+每个 `Theme*` 组件的 `@PreviewAll` 写在 **debug 镜像**，目录与 `main` 对齐：
+
+```
+lib/src/main/java/net/ankio/theme/compat/Button.kt
+lib/src/debug/java/net/ankio/theme/preview/compat/ButtonPreview.kt   # package net.ankio.theme.preview.compat
+```
+
+`settings/`、`sheet/`、`toast/` 同理；根目录令牌类见 `preview/ShapePreview.kt`。共享容器：`preview/PreviewHost.kt`（`net.ankio.theme.preview`）。
+
+`ThemeSheet.show` 依赖 Window/生命周期，不提供 Preview。
 
 ### ThemePreviewConfig
 

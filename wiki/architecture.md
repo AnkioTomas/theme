@@ -5,16 +5,17 @@
 ```
 theme/
 ├── lib/                    # JitPack 发布模块
-│   └── net/ankio/theme/
-│       ├── compat/         # Theme* 组件（Miuix ↔ Material）
-│       ├── settings/       # 设置页组件 + UiSettingsScreen
-│       ├── toast/          # ThemeToast
-│       ├── sheet/          # ThemeSheet、ThemeBottomSheet
-│       ├── compose/        # OverlayLifecycleOwner
-│       ├── util/           # themed()、findLifecycleOwner、DisplayUtils
-│       ├── Theme.kt        # AutoTheme
-│       ├── ThemeSettings.kt
-│       └── BaseComposeActivity.kt
+│   ├── src/main/.../net/ankio/theme/
+│   │   ├── compat/         # Theme* 组件（Miuix ↔ Material）
+│   │   ├── settings/       # 设置页组件 + UiSettingsScreen
+│   │   ├── toast/          # ThemeToast
+│   │   ├── sheet/          # ThemeSheet、ThemeBottomSheet
+│   │   └── …
+│   └── src/debug/.../preview/   # @PreviewAll 镜像（不进 release）
+│       ├── PreviewHost.kt
+│       ├── compat/*Preview.kt
+│       ├── settings/*Preview.kt
+│       └── sheet/*Preview.kt
 └── app/                    # 组件演示（非发布）
     └── demo/
         ├── catalog/        # 目录与详情

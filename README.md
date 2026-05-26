@@ -4,6 +4,8 @@ Compose 主题与组件兼容库。在 **Miuix** 与 **Material 3** 两套 UI �
 
 [![JitPack](https://jitpack.io/v/AnkioTomas/theme.svg)](https://jitpack.io/#AnkioTomas/theme)
 
+📖 **[组件 Wiki 文档](wiki/README.md)** — 按分类整理的完整 API 说明、示例与 Demo 指引。
+
 ---
 
 ## 环境要求
@@ -669,4 +671,4 @@ git push origin 1.0.0
 3. **消除无效配置** — 如 Miuix 非 Monet 模式下隐藏主题色选项；选具体主题色时自动关闭动态色。
 4. **Window 级 Popup** — Miuix 下拉/列表弹窗使用 Window 变体，不依赖 Scaffold。
 
-完整交互示例见 `app` 模块的 `ComponentsGallery`。
+完整交互示例见 `app` 模块 **组件目录**；详细文档见 [wiki/](wiki/README.md)。

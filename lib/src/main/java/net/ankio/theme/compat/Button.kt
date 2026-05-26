@@ -19,11 +19,34 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import net.ankio.theme.AnkioTheme
 import net.ankio.theme.LocalUiMode
 import net.ankio.theme.UiMode
+import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.basic.Button as MiuixButton
 import top.yukonga.miuix.kmp.basic.ButtonDefaults as MiuixButtonDefaults
+
+/** 主按钮文案色 */
+@Composable
+@ReadOnlyComposable
+fun themePrimaryButtonContentColor(): Color = when (LocalUiMode.current) {
+    UiMode.Material -> AnkioTheme.colorScheme.onPrimary
+    UiMode.Miuix -> MiuixTheme.colorScheme.onPrimary
+}
+
+/**
+ * 次要 / 组内按钮文案色。
+ * Miuix 使用 [top.yukonga.miuix.kmp.theme.Colors.onSurfaceContainer]（非 onSecondary）。
+ */
+@Composable
+@ReadOnlyComposable
+fun themeSecondaryButtonContentColor(): Color = when (LocalUiMode.current) {
+    UiMode.Material -> AnkioTheme.colorScheme.onSecondaryContainer
+    UiMode.Miuix -> MiuixTheme.colorScheme.onSurfaceContainer
+}
 
 /** 主按钮：Miuix 用 MiuixButton(primary)，Material 用 Button */
 @Composable
@@ -67,11 +90,18 @@ fun ThemeSecondaryButton(
             content = content
         )
 
-        UiMode.Miuix -> MiuixButton(
-            onClick = onClick,
-            modifier = modifier,
-            enabled = enabled,
-            content = content
-        )
+        UiMode.Miuix -> {
+            val scheme = MiuixTheme.colorScheme
+            MiuixButton(
+                onClick = onClick,
+                modifier = modifier,
+                enabled = enabled,
+                colors = MiuixButtonDefaults.buttonColors(
+                    color = scheme.secondaryVariant,
+                    disabledColor = scheme.disabledSecondaryVariant,
+                ),
+                content = content,
+            )
+        }
     }
 }

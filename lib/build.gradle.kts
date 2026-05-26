@@ -58,6 +58,8 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.service)
     implementation(libs.material)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

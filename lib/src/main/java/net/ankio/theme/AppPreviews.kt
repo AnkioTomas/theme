@@ -114,8 +114,29 @@ class ThemePreviewParameterProvider : PreviewParameterProvider<ThemePreviewConfi
  * }
  * ```
  */
-@Preview(showSystemUi = false)
+/** 单组件预览视口（约手机宽，足够放下一个控件/卡片）。 */
+@Preview(
+    showSystemUi = false,
+    widthDp = 390,
+    heightDp = 320,
+)
 annotation class PreviewAll
+
+/** 纵向内容较多的预览（排版表、多行 Toast、色板等）。 */
+@Preview(
+    showSystemUi = false,
+    widthDp = 390,
+    heightDp = 560,
+)
+annotation class PreviewAllTall
+
+/** 整页/大区块预览（设置页、BottomSheet 等）。 */
+@Preview(
+    showSystemUi = false,
+    widthDp = 390,
+    heightDp = 844,
+)
+annotation class PreviewAllScreen
 
 /**
  * 主题预览包装器，根据 config 提供 Configuration、LocalUiMode 和 AutoTheme。

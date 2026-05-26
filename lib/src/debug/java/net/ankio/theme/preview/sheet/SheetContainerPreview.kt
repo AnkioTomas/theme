@@ -11,27 +11,35 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import net.ankio.theme.PreviewAllScreen
-import net.ankio.theme.PreviewAllThemes
+import androidx.compose.ui.unit.dp
+import net.ankio.theme.AnkioTheme
+import net.ankio.theme.PreviewAll
 import net.ankio.theme.ThemePreviewConfig
 import net.ankio.theme.ThemePreviewParameterProvider
 import net.ankio.theme.compat.ThemeButtonLabel
 import net.ankio.theme.compat.ThemePrimaryButton
-import net.ankio.theme.sheet.ThemeBottomSheet
+import net.ankio.theme.compat.ThemeText
+import net.ankio.theme.preview.PreviewHost
+import net.ankio.theme.sheet.SheetContainer
 
-@PreviewAllScreen
+@PreviewAll
 @Composable
-private fun ThemeBottomSheetPreview(
+private fun SheetContainerPreview(
     @PreviewParameter(ThemePreviewParameterProvider::class) config: ThemePreviewConfig,
 ) {
-    PreviewAllThemes(config) {
-        ThemeBottomSheet(onDismissRequest = {}) { dismiss ->
-            ThemeButtonLabel("ThemeBottomSheet")
+    PreviewHost(config, contentPadding = 0.dp) {
+        SheetContainer {
+            ThemeText(
+                text = "SheetContainer",
+                style = AnkioTheme.textStyles.title3,
+                color = AnkioTheme.colorScheme.onSurface,
+            )
             ThemePrimaryButton(
-                onClick = dismiss,
-                text = "关闭",
+                onClick = {},
+                text = "操作",
                 modifier = Modifier.fillMaxWidth(),
             )
+            ThemeButtonLabel("底部弹层内容区")
         }
     }
 }

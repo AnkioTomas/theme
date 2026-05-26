@@ -13,14 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import net.ankio.theme.PreviewAll
+import net.ankio.theme.PreviewAllScreen
 import net.ankio.theme.PreviewAllThemes
 import net.ankio.theme.ThemePreviewConfig
 import net.ankio.theme.ThemePreviewParameterProvider
 import net.ankio.theme.settings.UiSettingsOptions
 import net.ankio.theme.settings.UiSettingsScreen
 
-@PreviewAll
+@PreviewAllScreen
 @Composable
 private fun UiSettingsScreenPreview(
     @PreviewParameter(ThemePreviewParameterProvider::class) config: ThemePreviewConfig,

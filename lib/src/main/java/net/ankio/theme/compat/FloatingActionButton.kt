@@ -23,25 +23,33 @@ import net.ankio.theme.LocalUiMode
 import net.ankio.theme.UiMode
 import top.yukonga.miuix.kmp.basic.FloatingActionButton as MiuixFloatingActionButton
 
-/** 浮动操作按钮：Miuix 用 MiuixFloatingActionButton，Material 用 FloatingActionButton */
+/**
+ * 浮动操作按钮：Miuix / Material 均使用 primaryContainer 底 + onPrimaryContainer 前景。
+ *
+ * Miuix 原生 [MiuixFloatingActionButton] 默认 container 为 [primary]，
+ * 与业务侧常用的 [AnkioTheme.colorScheme.onPrimaryContainer] 图标色不配对，Monet 下会发灰/撞色。
+ */
 @Composable
 fun ThemeFloatingActionButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
+    val containerColor = AnkioTheme.colorScheme.primaryContainer
+    val contentColor = AnkioTheme.colorScheme.onPrimaryContainer
     when (LocalUiMode.current) {
         UiMode.Material -> FloatingActionButton(
             onClick = onClick,
             modifier = modifier,
-            containerColor = AnkioTheme.colorScheme.primaryContainer,
-            contentColor = AnkioTheme.colorScheme.onPrimaryContainer,
+            containerColor = containerColor,
+            contentColor = contentColor,
             content = content
         )
 
         UiMode.Miuix -> MiuixFloatingActionButton(
             onClick = onClick,
             modifier = modifier,
+            containerColor = containerColor,
             content = content
         )
     }

@@ -7,12 +7,10 @@
 
 package net.ankio.theme.preview.compat
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import net.ankio.theme.AnkioTheme
@@ -29,7 +27,7 @@ import net.ankio.theme.preview.PreviewHost
 private fun ThemeTopAppBarPreview(
     @PreviewParameter(ThemePreviewParameterProvider::class) config: ThemePreviewConfig,
 ) {
-    PreviewHost(config, modifier = Modifier.padding(0.dp)) {
+    PreviewHost(config, contentPadding = 0.dp) {
         ThemeTopAppBar(
             title = "Title",
             navigationIcon = {

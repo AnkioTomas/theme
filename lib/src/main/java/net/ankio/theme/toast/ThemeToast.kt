@@ -201,7 +201,7 @@ private data class ToastVisuals(
 )
 
 @Composable
-private fun OverlayToastContent(
+internal fun OverlayToastContent(
     message: String,
     style: ThemeToast.Style,
     darkTheme: Boolean,

@@ -1,0 +1,51 @@
+/*
+ * Copyright (C) 2026 ankio(ankio@ankio.net)
+ * Licensed under the Apache License, Version 3.0 (the "License");
+ *
+ * Debug-only preview mirror. Not packaged in release.
+ */
+
+package net.ankio.theme.preview.settings
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import net.ankio.theme.PreviewAll
+import net.ankio.theme.ThemePreviewConfig
+import net.ankio.theme.ThemePreviewParameterProvider
+import net.ankio.theme.preview.PreviewHost
+import net.ankio.theme.settings.DisplayPercentageSlider
+import net.ankio.theme.settings.FollowSystemAccentSwitch
+
+@PreviewAll
+@Composable
+private fun DisplayPercentageSliderPreview(
+    @PreviewParameter(ThemePreviewParameterProvider::class) config: ThemePreviewConfig,
+) {
+    var value by remember { mutableIntStateOf(100) }
+    PreviewHost(config) {
+        DisplayPercentageSlider(
+            value = value,
+            onValueChange = { value = it },
+            onValueChangeFinished = {},
+        )
+    }
+}
+
+@PreviewAll
+@Composable
+private fun FollowSystemAccentSwitchPreview(
+    @PreviewParameter(ThemePreviewParameterProvider::class) config: ThemePreviewConfig,
+) {
+    var checked by remember { mutableStateOf(true) }
+    PreviewHost(config) {
+        FollowSystemAccentSwitch(
+            checked = checked,
+            onCheckedChange = { checked = it },
+        )
+    }
+}

@@ -30,10 +30,12 @@ import net.ankio.theme.compat.ThemeIconButton
 import net.ankio.theme.compat.ThemeSurface
 import net.ankio.theme.compat.ThemeText
 import net.ankio.theme.compat.ThemeVerticalDivider
+import net.ankio.theme.demo.ui.Caption
+import net.ankio.theme.demo.ui.SectionCard
 
 /** 容器类组件展示：Surface/Card（多形态）/Divider/FloatingToolbar */
 @Composable
-internal fun ContainersSection() {
+fun ContainersSection() {
     SectionCard(title = "容器 / Containers") {
 
         Caption("ThemeSurface · 默认")

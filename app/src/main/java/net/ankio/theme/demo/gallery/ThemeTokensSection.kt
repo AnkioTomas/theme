@@ -27,6 +27,8 @@ import net.ankio.theme.AnkioTheme
 import net.ankio.theme.AutoThemeTokens
 import net.ankio.theme.compat.ThemeIcon
 import net.ankio.theme.compat.ThemeText
+import net.ankio.theme.demo.ui.Caption
+import net.ankio.theme.demo.ui.SectionCard
 
 /**
  * 主题令牌展示：
@@ -34,7 +36,7 @@ import net.ankio.theme.compat.ThemeText
  * - AutoThemeTokens.extraColors（语义色 info/warning/error/success/debug）
  */
 @Composable
-internal fun ThemeTokensSection() {
+fun ThemeTokensSection() {
     SectionCard(title = "主题令牌 / Tokens") {
 
         Caption("AnkioTheme.colorScheme · 主色与容器色")

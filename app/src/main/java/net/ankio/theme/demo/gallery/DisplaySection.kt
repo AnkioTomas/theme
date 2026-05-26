@@ -7,6 +7,7 @@ package net.ankio.theme.demo.gallery
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -20,10 +21,12 @@ import kotlinx.coroutines.delay
 import net.ankio.theme.compat.ThemeCircularProgressIndicator
 import net.ankio.theme.compat.ThemeLinearProgressIndicator
 import net.ankio.theme.compat.ThemeSmallTitle
+import net.ankio.theme.demo.ui.Caption
+import net.ankio.theme.demo.ui.SectionCard
 
 /** 进度条 + SmallTitle */
 @Composable
-internal fun DisplaySection() {
+fun DisplaySection() {
     SectionCard(title = "进度与小标题 / Progress & SmallTitle") {
 
         Caption("ThemeLinearProgressIndicator · 确定进度 + 不确定")
@@ -53,7 +56,9 @@ internal fun DisplaySection() {
         Caption("ThemeSmallTitle")
         ThemeSmallTitle(
             text = "我是一个分组小标题",
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
         )
     }
 }

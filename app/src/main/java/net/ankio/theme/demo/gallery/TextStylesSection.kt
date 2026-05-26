@@ -10,13 +10,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import net.ankio.theme.AnkioTheme
 import net.ankio.theme.compat.ThemeText
+import net.ankio.theme.demo.ui.Caption
+import net.ankio.theme.demo.ui.SectionCard
 
 /**
  * 排版展示：演示 [AnkioTheme.textStyles] 全部 14 种样式。
  * Miuix 一比一透传 Miuix TextStyles；Material 按语义映射 Typography。
  */
 @Composable
-internal fun TextStylesSection() {
+fun TextStylesSection() {
     SectionCard(title = "排版 / TextStyles") {
         Caption("AnkioTheme.textStyles · 14 种样式")
         val s = AnkioTheme.textStyles

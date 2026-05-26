@@ -27,10 +27,13 @@ import net.ankio.theme.compat.ThemeIconButton
 import net.ankio.theme.compat.ThemePrimaryButton
 import net.ankio.theme.compat.ThemeSecondaryButton
 import net.ankio.theme.compat.ThemeText
+import net.ankio.theme.demo.ui.Caption
+import net.ankio.theme.demo.ui.ComponentSample
+import net.ankio.theme.demo.ui.SectionCard
 
 /** 按钮类组件展示：Primary/Secondary/Icon/FAB/ButtonGroup */
 @Composable
-internal fun ButtonsSection() {
+fun ButtonsSection() {
     SectionCard(title = "按钮 / Buttons") {
         Caption("ThemePrimaryButton / ThemeSecondaryButton")
         Row(

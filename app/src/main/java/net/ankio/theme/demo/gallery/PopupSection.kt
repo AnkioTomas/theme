@@ -32,11 +32,13 @@ import net.ankio.theme.compat.ThemeSuperDropdown
 import net.ankio.theme.compat.ThemeSuperListPopup
 import net.ankio.theme.compat.ThemeSuperSpinner
 import net.ankio.theme.compat.ThemeText
+import net.ankio.theme.demo.ui.Caption
+import net.ankio.theme.demo.ui.SectionCard
 import top.yukonga.miuix.kmp.basic.SpinnerEntry
 
 /** 弹窗类组件：SuperSpinner/SuperDropdown/SuperListPopup/SearchBar */
 @Composable
-internal fun PopupSection() {
+fun PopupSection() {
     SectionCard(title = "弹窗与下拉 / Popup") {
 
         Caption("ThemeSuperDropdown（纯文本下拉）")

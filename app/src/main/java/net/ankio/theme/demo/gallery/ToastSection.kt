@@ -26,6 +26,8 @@ import net.ankio.theme.compat.ThemePrimaryButton
 import net.ankio.theme.compat.ThemeSecondaryButton
 import net.ankio.theme.compat.ThemeText
 import net.ankio.theme.toast.ThemeToast
+import net.ankio.theme.demo.ui.Caption
+import net.ankio.theme.demo.ui.SectionCard
 
 /**
  * Toast 展示。
@@ -33,7 +35,7 @@ import net.ankio.theme.toast.ThemeToast
  * 未授权时 lib 内部会自动降级为系统 Toast，本节同时演示权限引导 API。
  */
 @Composable
-internal fun ToastSection() {
+fun ToastSection() {
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         (context.applicationContext as? Application)?.let { ThemeToast.init(it) }

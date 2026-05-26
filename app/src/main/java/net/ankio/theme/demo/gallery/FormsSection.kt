@@ -31,10 +31,12 @@ import net.ankio.theme.compat.ThemeSlider
 import net.ankio.theme.compat.ThemeSwitch
 import net.ankio.theme.compat.ThemeText
 import net.ankio.theme.compat.ThemeTextField
+import net.ankio.theme.demo.ui.Caption
+import net.ankio.theme.demo.ui.SectionCard
 
 /** 表单类组件展示：Switch/Checkbox/Slider/TextField/NumberPicker */
 @Composable
-internal fun FormsSection() {
+fun FormsSection() {
     SectionCard(title = "表单 / Forms") {
 
         Caption("ThemeSwitch / ThemeCheckbox")

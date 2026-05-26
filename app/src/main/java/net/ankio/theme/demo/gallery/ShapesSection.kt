@@ -19,13 +19,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import net.ankio.theme.AnkioTheme
+import net.ankio.theme.demo.ui.Caption
+import net.ankio.theme.demo.ui.SectionCard
 
 /**
  * 形状展示：直接读取 MaterialTheme.shapes，由 lib 的 [appShapes] 提供。
  * 5 级（extraSmall / small / medium / large / extraLarge）对应 lib 中的圆角方案。
  */
 @Composable
-internal fun ShapesSection() {
+fun ShapesSection() {
     SectionCard(title = "形状 / Shapes") {
         Caption("MaterialTheme.shapes（来自 appShapes()）")
         val s = MaterialTheme.shapes

@@ -20,6 +20,8 @@ import androidx.compose.ui.unit.dp
 import net.ankio.theme.AnkioTheme
 import net.ankio.theme.compat.ThemeIcon
 import net.ankio.theme.demo.R
+import net.ankio.theme.demo.ui.Caption
+import net.ankio.theme.demo.ui.SectionCard
 
 /**
  * 图标展示：
@@ -27,7 +29,7 @@ import net.ankio.theme.demo.R
  * - 多种尺寸（16/24/32/48）+ 多种 tint
  */
 @Composable
-internal fun IconsSection() {
+fun IconsSection() {
     SectionCard(title = "图标 / Icons") {
 
         Caption("ThemeIcon · ImageVector · 多 tint")

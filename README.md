@@ -304,10 +304,12 @@ ThemeIconButton(onClick = { }) {
 
 #### ThemeSmallTitle
 
-分区小标题：
+分区小标题（默认无内边距，由页面布局控制间距）：
 
 ```kotlin
 ThemeSmallTitle(text = "账户设置")
+// Miuix 全宽设置页可选用：
+ThemeSmallTitle(text = "账户设置", insideMargin = ThemeSmallTitleInsideMarginMiuix)
 ```
 
 ---

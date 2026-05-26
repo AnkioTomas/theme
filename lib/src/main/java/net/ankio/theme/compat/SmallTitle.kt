@@ -26,16 +26,24 @@ import net.ankio.theme.LocalUiMode
 import net.ankio.theme.UiMode
 import top.yukonga.miuix.kmp.basic.SmallTitle as MiuixSmallTitle
 
+/** Miuix 全宽设置页常用边距（按需传入 [ThemeSmallTitle] 的 [insideMargin]） */
+val ThemeSmallTitleInsideMarginMiuix = PaddingValues(horizontal = 28.dp, vertical = 8.dp)
+
+/** Material 列表分组标题常用边距（按需传入 [insideMargin]） */
+val ThemeSmallTitleInsideMarginMaterial = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+
 /**
  * 小标题兼容层，用于分组标题。
- * Material 使用 ThemeText + subtitle 样式，Miuix 使用 Miuix SmallTitle。
+ *
+ * 默认无内边距，由调用方根据列表/页面布局自行 `padding`。
+ * 全宽 Miuix 设置页可使用 [ThemeSmallTitleInsideMarginMiuix]。
  */
 @Composable
 fun ThemeSmallTitle(
     text: String,
     modifier: Modifier = Modifier,
     textColor: Color = AnkioTheme.colorScheme.onSurfaceVariant,
-    insideMargin: PaddingValues = PaddingValues(28.dp, 8.dp),
+    insideMargin: PaddingValues = PaddingValues(0.dp),
 ) {
     when (LocalUiMode.current) {
         UiMode.Material -> ThemeText(

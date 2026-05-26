@@ -20,6 +20,7 @@ import net.ankio.theme.demo.gallery.ShapesSection
 import net.ankio.theme.demo.gallery.TabRowSection
 import net.ankio.theme.demo.gallery.TextStylesSection
 import net.ankio.theme.demo.gallery.ThemeTokensSection
+import net.ankio.theme.demo.gallery.SheetSection
 import net.ankio.theme.demo.gallery.ToastSection
 import net.ankio.theme.demo.gallery.TopAppBarSection
 
@@ -57,6 +58,7 @@ enum class DemoCategory(
     PullToRefresh(DemoGroup.Navigation, "下拉刷新", "ThemePullToRefresh"),
 
     Toast(DemoGroup.Feedback, "Toast", "ThemeToast 与权限说明"),
+    Sheet(DemoGroup.Feedback, "底部弹层", "ThemeSheet / ThemeBottomSheet"),
 
     SettingsWidgets(DemoGroup.Settings, "设置项组件", "SettingCard / Switch / Dropdown 等"),
     ;
@@ -88,6 +90,7 @@ fun DemoCategory.Content() {
         DemoCategory.NavigationRail -> NavigationRailSection()
         DemoCategory.PullToRefresh -> PullToRefreshSection()
         DemoCategory.Toast -> ToastSection()
+        DemoCategory.Sheet -> SheetSection()
         DemoCategory.SettingsWidgets -> SettingsWidgetsSection()
     }
 }

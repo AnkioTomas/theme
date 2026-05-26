@@ -26,6 +26,8 @@ import net.ankio.theme.compat.ThemeIcon
 import net.ankio.theme.compat.ThemeIconButton
 import net.ankio.theme.compat.ThemePrimaryButton
 import net.ankio.theme.compat.ThemeSecondaryButton
+import net.ankio.theme.compat.themePrimaryButtonContentColor
+import net.ankio.theme.compat.themeSecondaryButtonContentColor
 import net.ankio.theme.compat.ThemeText
 import net.ankio.theme.demo.ui.Caption
 import net.ankio.theme.demo.ui.ComponentSample
@@ -44,21 +46,21 @@ fun ButtonsSection() {
                 ThemeText(
                     text = "Primary",
                     style = AnkioTheme.textStyles.button,
-                    color = AnkioTheme.colorScheme.onPrimary,
+                    color = themePrimaryButtonContentColor(),
                 )
             }
             ThemeSecondaryButton(onClick = {}) {
                 ThemeText(
                     text = "Secondary",
                     style = AnkioTheme.textStyles.button,
-                    color = AnkioTheme.colorScheme.onSecondaryContainer,
+                    color = themeSecondaryButtonContentColor(),
                 )
             }
             ThemePrimaryButton(onClick = {}, enabled = false) {
                 ThemeText(
                     text = "Disabled",
                     style = AnkioTheme.textStyles.button,
-                    color = AnkioTheme.colorScheme.onPrimary,
+                    color = themePrimaryButtonContentColor(),
                 )
             }
         }
@@ -110,7 +112,7 @@ fun ButtonsSection() {
                     ThemeText(
                         text = label,
                         style = AnkioTheme.textStyles.button,
-                        color = AnkioTheme.colorScheme.onSecondaryContainer,
+                        color = themeSecondaryButtonContentColor(),
                     )
                 }
             }

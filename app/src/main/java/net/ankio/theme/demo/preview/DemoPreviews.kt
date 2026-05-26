@@ -142,6 +142,16 @@ private fun DemoCategoryShellPreview(
     }
 }
 
+@PreviewAll
+@Composable
+private fun SheetPreview(
+    @PreviewParameter(ThemePreviewParameterProvider::class) config: ThemePreviewConfig,
+) {
+    PreviewAllThemes(config) {
+        net.ankio.theme.demo.gallery.SheetSection()
+    }
+}
+
 /** 仅内容区（无壳），便于快速查看某一分类示例 */
 @PreviewAll
 @Composable

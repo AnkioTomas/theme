@@ -94,15 +94,15 @@ fun SettingsWidgetsSection() {
 
         ComponentSample(
             name = "ThemeSettingTextField",
-            api = "ThemeSettingTextField(value, onValueChange, title, startAction)",
-            description = "设置页内嵌文本输入。",
+            api = "ThemeSettingTextField(value, onValueChange, title, startAction, summary, placeholder)",
+            description = "图标为 leadingIcon，标题为输入框 label，副标题在框下。",
         ) {
             ThemeSettingTextField(
                 value = text,
                 onValueChange = { text = it },
                 title = "邮箱",
                 summary = "用于通知",
-                label = "邮箱地址",
+                placeholder = "name@example.com",
                 startAction = {
                     Icon(Icons.Filled.Tune, null, tint = AnkioTheme.colorScheme.primary)
                 },

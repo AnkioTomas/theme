@@ -24,8 +24,14 @@ val ThemeSheetTopCorner = 40.dp
 /** 全圆角浮层卡片相对屏幕左右的留白。 */
 val ThemeSheetFullyRoundedHorizontalMargin = 16.dp
 
-/** 全圆角浮层卡片距底部的额外留白（设计留白，非系统导航条避让）。 */
-val ThemeSheetFullyRoundedBottomMargin = 16.dp
+/** 全圆角浮层卡片在系统导航条之上的额外留白。 */
+val ThemeSheetFullyRoundedBottomMargin = 24.dp
+
+/** 全圆角：整卡抬离屏幕底（先避让导航条，再叠加设计留白）。 */
+internal fun Modifier.fullyRoundedSheetInsets(): Modifier = this
+    .padding(horizontal = ThemeSheetFullyRoundedHorizontalMargin)
+    .navigationBarsPadding()
+    .padding(bottom = ThemeSheetFullyRoundedBottomMargin)
 
 internal fun sheetShape(shape: ThemeSheetShape): Shape = when (shape) {
     ThemeSheetShape.TopRounded -> RoundedCornerShape(
@@ -47,9 +53,7 @@ internal fun SheetContainer(
             .fillMaxWidth()
             .then(
                 if (shape == ThemeSheetShape.FullyRounded) {
-                    Modifier
-                        .padding(horizontal = ThemeSheetFullyRoundedHorizontalMargin)
-                        .padding(bottom = ThemeSheetFullyRoundedBottomMargin)
+                    Modifier.fullyRoundedSheetInsets()
                 } else {
                     Modifier
                 },
@@ -65,7 +69,13 @@ internal fun SheetContainer(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp, vertical = 20.dp)
-                    .navigationBarsPadding(),
+                    .then(
+                        if (shape == ThemeSheetShape.TopRounded) {
+                            Modifier.navigationBarsPadding()
+                        } else {
+                            Modifier
+                        },
+                    ),
                 content = content,
             )
         }

@@ -262,9 +262,7 @@ fun ThemeBottomSheet(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val sheetModifier = when (shape) {
         ThemeSheetShape.TopRounded -> Modifier
-        ThemeSheetShape.FullyRounded -> Modifier
-            .padding(horizontal = ThemeSheetFullyRoundedHorizontalMargin)
-            .padding(bottom = ThemeSheetFullyRoundedBottomMargin)
+        ThemeSheetShape.FullyRounded -> Modifier.fullyRoundedSheetInsets()
     }
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -273,20 +271,27 @@ fun ThemeBottomSheet(
         shape = sheetShape(shape),
         containerColor = AnkioTheme.colorScheme.surfaceContainerHigh,
     ) {
-        ThemeSheetBody(onDismissRequest, content)
+        ThemeSheetBody(
+            dismiss = onDismissRequest,
+            navigationBarsPadding = shape == ThemeSheetShape.TopRounded,
+            content = content,
+        )
     }
 }
 
 @Composable
 private fun ThemeSheetBody(
     dismiss: () -> Unit,
+    navigationBarsPadding: Boolean = true,
     content: @Composable ColumnScope.(dismiss: () -> Unit) -> Unit,
 ) {
     Column(
         Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp, vertical = 20.dp)
-            .navigationBarsPadding(),
+            .then(
+                if (navigationBarsPadding) Modifier.navigationBarsPadding() else Modifier,
+            ),
     ) {
         content(dismiss)
     }

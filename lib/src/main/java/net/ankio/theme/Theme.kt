@@ -36,6 +36,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.core.view.WindowInsetsControllerCompat
 import top.yukonga.miuix.kmp.theme.ColorSchemeMode
+import top.yukonga.miuix.kmp.theme.LocalContentColor as MiuixLocalContentColor
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.theme.ThemeController as MiuixThemeController
 
@@ -156,7 +157,12 @@ private fun MiuixWrapped(
         )
     }
 
-    MiuixTheme(controller = controller, content = content)
+    // MiuixTheme 不设置 LocalContentColor（库默认 Color.Black），未显式传色的 Text/Icon 在深色下会发黑。
+    MiuixTheme(controller = controller) {
+        CompositionLocalProvider(MiuixLocalContentColor provides MiuixTheme.colorScheme.onSurface) {
+            content()
+        }
+    }
 }
 
 /** 解析 ColorScheme：keyColor==0 走系统动态色（API 31+），否则用种子色生成。 */

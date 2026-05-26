@@ -53,9 +53,29 @@ ThemeTopAppBar(..., scroll = scroll)
 | 场景 | Material | Miuix |
 |------|----------|-------|
 | 可折叠 | `LargeTopAppBar` | `MiuixTopAppBar` + scrollBehavior |
+| 展开/收起标题 | `collapsedFraction > 0.5` 时用 `title`，否则 `largeTitle ?: title` | `largeTitle` 独立参数 |
 | 不可折叠 + 居中 | `CenterAlignedTopAppBar` | `MiuixSmallTopAppBar` |
 | 不可折叠 + 起始 | `TopAppBar` | `MiuixTopAppBar`（`largeTitle = null`） |
-| 状态栏 | 折叠时 `surface` → `surfaceContainer` 渐变 | 无同步（系统栏由 Activity 主题控制） |
+| 状态栏 | 折叠时 `surface` → `surfaceContainer` 渐变（`snapshotFlow` 驱动） | 无同步（系统栏由 Activity 主题控制） |
+
+### Navigation Compose 集成（Demo）
+
+| 要点 | 做法 |
+|------|------|
+| 子页标题 | **勿**用 `destination.route` 解析带参路由（模板为 `category/{categoryName}`）；用 `NavBackStackEntry.arguments` |
+| 列表滚动位置 | `rememberSaveable(backStackEntry, saver = LazyListState.Saver) { LazyListState() }` |
+| 折叠偏移重置 | `key(routeKey) { rememberThemeTopAppBarScroll(true) }`，避免子页沿用上一页折叠状态 |
+| 预测性返回 | `NavHost` 默认转场 + `popBackStack()`；Manifest `enableOnBackInvokedCallback` |
+
+---
+
+## ThemeTopAppBarTitleAlignment
+
+```kotlin
+enum class ThemeTopAppBarTitleAlignment { Start, Center }
+```
+
+仅影响**收起后**小标题对齐；可折叠时大标题区一般为起始对齐。
 
 ---
 

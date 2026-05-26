@@ -14,8 +14,19 @@
 | 场景 | 行为 |
 |------|------|
 | 分类详情 | `navController.popBackStack()` + Nav 默认 slide 转场 |
-| 设置 Tab | `navigate(catalog)` 单顶恢复状态 |
-| 组件目录 | 系统处理返回 |
+| 设置 Tab | `navigate` + `saveState` / `restoreState` / `launchSingleTop` |
+| 组件目录 | 系统处理返回（无自定义 `BackHandler`） |
+
+### 状态与顶栏（与代码一致）
+
+| 状态 | 实现 |
+|------|------|
+| 路由 | `catalog` · `settings` · `category/{categoryName}` |
+| 顶栏标题 | `arguments["categoryName"]` → `DemoCategory.title`；勿解析 `destination.route` 模板 |
+| 大标题折叠 | `DemoAppShell` + `rememberThemeTopAppBarScroll`；`nestedScroll` 挂到各页 `LazyColumn` |
+| 折叠重置 | `topAppBarScrollKey` 随目的地变化（`key` 包裹 scroll） |
+| 列表滚动 | `rememberSaveable(NavBackStackEntry, …)` 绑定返回栈条目 |
+| 标题对齐 | 仅 `catalog` 显示「居左 / 居中」；选中项 `Primary`、未选 `Secondary` 按钮 |
 
 ---
 
@@ -88,7 +99,7 @@ lib/src/debug/.../preview/compat/ButtonPreview.kt
 |------|------|
 | `preview/compat/` | 全部 Theme* compat 预览 |
 | `preview/settings/` | SettingCard、ThemeSetting*、UiSettingsScreen |
-| `preview/sheet/` | ThemeBottomSheet |
+| `preview/sheet/` | `ThemeBottomSheet`、`SheetContainer`（顶圆角 / 全圆角） |
 | `preview/toast/` | Toast 样式（非 overlay） |
 | `preview/ShapePreview.kt` | 形状令牌 |
 
@@ -107,10 +118,15 @@ lib/src/debug/.../preview/compat/ButtonPreview.kt
 ### 主界面
 
 ```text
-DemoAppShell
-├── ThemeTopAppBar（可折叠）
-├── 内容：组件目录 / 设置 / 分类详情
-└── ThemeNavigationBar（子页可隐藏）
+MainActivity
+└── DemoAppShell
+    ├── ThemeTopAppBar（catalog / 分类详情可折叠；settings 不折叠）
+    ├── TitleAlignmentBar（仅 catalog：居左 / 居中）
+    ├── DemoNavHost（NavHost）
+    │   ├── catalog → CatalogScreen
+    │   ├── settings → UiSettingsScreen
+    │   └── category/{categoryName} → CategoryDetailScreen
+    └── ThemeNavigationBar（分类详情页隐藏）
 ```
 
 ### 组件目录（DemoCategory）

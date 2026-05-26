@@ -11,9 +11,8 @@ theme/
 │   │   ├── compat/              # Theme* 组件（Miuix ↔ Material）
 │   │   ├── settings/            # 设置页 + UiSettingsScreen
 │   │   ├── toast/               # ThemeToast
-│   │   ├── sheet/               # ThemeSheet、ThemeBottomSheet
+│   │   ├── sheet/               # ThemeSheet、AnimatedSheetOverlay、OverlayWindow
 │   │   ├── compose/             # OverlayLifecycleOwner
-│   │   ├── util/                # Context 扩展
 │   │   ├── Theme.kt             # AutoTheme
 │   │   ├── AnkioTheme.kt
 │   │   └── ThemeSettings.kt

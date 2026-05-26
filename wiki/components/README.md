@@ -36,6 +36,8 @@
 | `ThemeSuperSpinner` | 表单 | [forms.md](forms.md#themesuperspinner) |
 | `ThemeSuperDropdown` | 表单 | [forms.md](forms.md#themesuperdropdown) |
 | `ThemeTopAppBar` | 导航 | [navigation.md](navigation.md#themetopappbar) |
+| `ThemeTopAppBarTitleAlignment` | 导航 | [navigation.md](navigation.md#themetopappbartitlealignment) |
+| `ThemeTopAppBarScroll` | 导航 | [navigation.md](navigation.md#滚动折叠) |
 | `rememberThemeTopAppBarScroll` | 导航 | [navigation.md](navigation.md#滚动折叠) |
 | `ThemeNavigationBar` | 导航 | [navigation.md](navigation.md#themenavigationbar) |
 | `ThemeNavigationBarItem` | 导航 | [navigation.md](navigation.md#themenavigationbaritem) |
@@ -52,7 +54,7 @@
 | `ThemeListPopupItem` | 弹窗 | [popups.md](popups.md#themelistpopupitem) |
 | `ThemeColorScheme` | 令牌 | [theme-system.md](../theme-system.md#ankiotheme) |
 | `SettingCard` 等 | 设置 | [settings-widgets.md](../settings-widgets.md) |
-| `ThemeSheet` / `ThemeBottomSheet` | Sheet | [sheet.md](../sheet.md) |
+| `ThemeSheet` / `ThemeBottomSheet` / `ThemeSheetShape` | Sheet | [sheet.md](../sheet.md) |
 | `ThemeToast` | Toast | [toast.md](../toast.md) |
 
 ---

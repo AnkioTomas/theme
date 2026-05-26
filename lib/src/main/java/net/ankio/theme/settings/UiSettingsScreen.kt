@@ -31,15 +31,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import net.ankio.theme.ColorMode
-import net.ankio.theme.PreviewAll
-import net.ankio.theme.PreviewAllThemes
-import net.ankio.theme.ThemePreviewConfig
-import net.ankio.theme.ThemePreviewParameterProvider
-import net.ankio.theme.ThemeSettings
 import net.ankio.theme.R
+import net.ankio.theme.ThemeSettings
 import net.ankio.theme.UiMode
 import net.ankio.theme.themeKeyOptions
 
@@ -54,37 +49,6 @@ data class UiSettingsOptions(
     val themeColorEntries: List<Pair<String, String>> = emptyList(),
 )
 
-
-@SuppressLint("RememberReturnType")
-@PreviewAll
-@Composable
-private fun UiSettingsScreenPreview(
-    @PreviewParameter(ThemePreviewParameterProvider::class) config: ThemePreviewConfig,
-) {
-    /** 预览用 UiSettingsOptions（英语） */
-    val previewOptions = UiSettingsOptions(
-        uiModeEntries = listOf("miuix" to "Miuix", "material" to "Material"),
-        colorModeEntries = listOf(
-            0 to "Follow system (MIUI)",
-            1 to "Light",
-            2 to "Dark",
-            3 to "Follow system (Monet)",
-            4 to "Light (Monet)",
-            5 to "Dark (Monet)",
-        ),
-        themeColorEntries = emptyList(), // 使用 theme 库自带的 theme_color_xxx 多语言
-    )
-
-    PreviewAllThemes(config) {
-        UiSettingsScreen(
-            options = previewOptions,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-        )
-    }
-}
-
 /**
  * 独立的 UI 设置组件。
  * 展示：UI 风格、颜色模式、跟随系统强调色、主题色选择。
@@ -94,6 +58,7 @@ private fun UiSettingsScreenPreview(
  *   供外层已提供滚动的页面嵌入使用。
  * @param onThemeChanged 主题变更后回调，如 setDefaultNightMode + activity.recreate()
  */
+@SuppressLint("RememberReturnType")
 @Composable
 fun UiSettingsScreen(
     options: UiSettingsOptions = UiSettingsOptions(),

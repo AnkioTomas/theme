@@ -5,25 +5,20 @@
 
 package net.ankio.theme.settings
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import net.ankio.theme.AnkioTheme
+import net.ankio.theme.compat.TextFieldStyle
 import net.ankio.theme.compat.ThemeCard
-import net.ankio.theme.compat.ThemeText
 import net.ankio.theme.compat.ThemeTextField
 
 /**
- * 设置项文本输入：标题行 + [ThemeTextField]，支持分组 [SettingCardPosition]。
+ * 设置项文本输入：图标与标题在 [ThemeTextField] 内部（leadingIcon + label），
+ * 副标题显示在输入框下方（supportingText）。
  */
 @Composable
 fun ThemeSettingTextField(
@@ -33,7 +28,7 @@ fun ThemeSettingTextField(
     startAction: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     summary: String? = null,
-    label: String? = null,
+    placeholder: String = "",
     position: SettingCardPosition = SettingCardPosition.Single,
     singleLine: Boolean = true,
     maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
@@ -50,42 +45,19 @@ fun ThemeSettingTextField(
                 .fillMaxWidth()
                 .padding(16.dp),
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Box(
-                    modifier = Modifier.size(40.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    startAction()
-                }
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 8.dp),
-                ) {
-                    ThemeText(
-                        text = title,
-                        style = AnkioTheme.textStyles.title4,
-                        color = AnkioTheme.colorScheme.onSurface,
-                    )
-                    if (summary != null) {
-                        Spacer(Modifier.height(2.dp))
-                        ThemeText(
-                            text = summary,
-                            style = AnkioTheme.textStyles.footnote1,
-                            color = AnkioTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                }
-            }
-            Spacer(Modifier.height(12.dp))
             ThemeTextField(
                 value = value,
                 onValueChange = onValueChange,
-                label = label ?: title,
                 modifier = Modifier.fillMaxWidth(),
+                style = TextFieldStyle.Filled,
+                label = title,
+                placeholder = placeholder,
+                leadingIcon = startAction,
+                supportingText = summary?.let { text ->
+                    {
+                        Text(text)
+                    }
+                },
                 singleLine = singleLine,
                 maxLines = maxLines,
             )

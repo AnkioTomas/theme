@@ -53,7 +53,7 @@
 | `ThemeLazyListPopupColumn` | 弹窗 | [popups.md](popups.md#themelazylistpopupcolumn) |
 | `ThemeListPopupItem` | 弹窗 | [popups.md](popups.md#themelistpopupitem) |
 | `ThemeColorScheme` | 令牌 | [theme-system.md](../theme-system.md#ankiotheme) |
-| `SettingCard` / `ThemeSettingTextField` / `ThemeSettingComboField` 等 | 设置 | [settings-widgets.md](../settings-widgets.md) |
+| `SettingCard` / `ThemeSettingTextField` / `ThemeSettingDropdown` 等 | 设置 | [settings-widgets.md](../settings-widgets.md) |
 | `ThemeSheet` / `ThemeBottomSheet` / `ThemeSheetShape` | Sheet | [sheet.md](../sheet.md) |
 | `ThemeToast` | Toast | [toast.md](../toast.md) |
 

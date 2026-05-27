@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Percent
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Icon
@@ -21,12 +22,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import net.ankio.theme.AnkioTheme
+import net.ankio.theme.ThemeSettings
 import net.ankio.theme.settings.SettingCard
 import net.ankio.theme.settings.SettingCardPosition
 import net.ankio.theme.settings.SettingInputMode
 import net.ankio.theme.compat.ThemeIconButton
 import net.ankio.theme.settings.ThemeSettingClick
 import net.ankio.theme.settings.ThemeSettingDropdown
+import net.ankio.theme.settings.ThemeSettingSlider
 import net.ankio.theme.settings.ThemeSettingSwitch
 import net.ankio.theme.settings.ThemeSettingTextField
 import net.ankio.theme.demo.ui.ComponentSample
@@ -36,6 +39,7 @@ import net.ankio.theme.demo.ui.SectionCard
 fun SettingsWidgetsSection() {
     SectionCard(title = "设置页原子组件") {
         var switchOn by remember { mutableStateOf(true) }
+        var displayPercentage by remember { mutableIntStateOf(100) }
         var dropdownIndex by remember { mutableIntStateOf(0) }
         var text by remember { mutableStateOf("ankio@ankio.net") }
         var password by remember { mutableStateOf("secret") }
@@ -76,6 +80,27 @@ fun SettingsWidgetsSection() {
                 onCheckedChange = { switchOn = it },
                 startAction = {
                     Icon(Icons.Filled.DarkMode, null, tint = AnkioTheme.colorScheme.primary)
+                },
+                position = SettingCardPosition.Single,
+            )
+        }
+
+        ComponentSample(
+            name = "ThemeSettingSlider",
+            api = "ThemeSettingSlider(..., onValueChangeFinished?)",
+            description = "显示比例 85–130%（步进 5%）。拖动只改本地值，松手再 onValueChangeFinished 持久化。",
+        ) {
+            ThemeSettingSlider(
+                title = "显示比例",
+                summary = "与内置设置页一致；范围见 ThemeSettings",
+                value = displayPercentage.toFloat(),
+                onValueChange = { displayPercentage = ThemeSettings.snapDisplayPercentage(it) },
+                onValueChangeFinished = { /* 示例：此处写入 ThemeSettings.displayPercentage */ },
+                valueRange = ThemeSettings.displayPercentageValueRange,
+                steps = ThemeSettings.displayPercentageSliderSteps,
+                valueLabel = "$displayPercentage%",
+                startAction = {
+                    Icon(Icons.Filled.Percent, null, tint = AnkioTheme.colorScheme.primary)
                 },
                 position = SettingCardPosition.Single,
             )

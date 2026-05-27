@@ -24,6 +24,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Percent
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import net.ankio.theme.AnkioTheme
 import net.ankio.theme.ColorMode
 import net.ankio.theme.R
 import net.ankio.theme.ThemeSettings
@@ -117,12 +121,25 @@ fun UiSettingsScreen(
             entries = colorModeEntries,
             position = SettingCardPosition.Middle,
         )
-        DisplayPercentageSlider(
-            value = displayPercentage,
-            onValueChange = { displayPercentage = it },
+        // 拖动中只改本地 state；松手再写 SP 并 recreate，避免每帧持久化
+        ThemeSettingSlider(
+            title = stringResource(R.string.theme_display_percentage),
+            summary = stringResource(R.string.theme_display_percentage_summary),
+            value = displayPercentage.toFloat(),
+            onValueChange = { displayPercentage = ThemeSettings.snapDisplayPercentage(it) },
             onValueChangeFinished = {
                 ThemeSettings.displayPercentage = displayPercentage
                 onThemeChanged()
+            },
+            valueRange = ThemeSettings.displayPercentageValueRange,
+            steps = ThemeSettings.displayPercentageSliderSteps,
+            valueLabel = "$displayPercentage%",
+            startAction = {
+                Icon(
+                    imageVector = Icons.Filled.Percent,
+                    contentDescription = null,
+                    tint = AnkioTheme.colorScheme.primary,
+                )
             },
             position = SettingCardPosition.Last,
         )

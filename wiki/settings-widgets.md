@@ -85,6 +85,50 @@ ThemeSettingClick(
 
 ---
 
+## ThemeSettingSlider
+
+带滑块的设置项，与 [ThemeSettingSwitch] 相同的分组卡片风格。
+
+```kotlin
+ThemeSettingSlider(
+    title = "采样温度",
+    summary = "越高越发散",
+    value = temperature,
+    onValueChange = { temperature = it },
+    valueLabel = "%.1f".format(temperature),
+    valueRange = 0f..2f,
+    steps = 19,
+    onValueChangeFinished = { persist() },  // 可选：手指抬起再写入
+    startAction = { Icon(Icons.Filled.Tune, null, ...) },
+    position = SettingCardPosition.Last,
+)
+```
+
+| 参数 | 说明 |
+|------|------|
+| `valueLabel` | 右侧当前值文案（如 `85%`、`0.7`） |
+| `valueRange` / `steps` | 传给 [ThemeSlider] |
+| `onValueChangeFinished` | 拖动结束回调，适合延迟持久化 |
+
+显示比例（`UiSettingsScreen` 内置项）直接复用本组件，范围与步进见 `ThemeSettings`：
+
+```kotlin
+ThemeSettingSlider(
+    value = displayPercentage.toFloat(),
+    onValueChange = { displayPercentage = ThemeSettings.snapDisplayPercentage(it) },
+    onValueChangeFinished = {
+        ThemeSettings.displayPercentage = displayPercentage
+        onThemeChanged()
+    },
+    valueRange = ThemeSettings.displayPercentageValueRange,
+    steps = ThemeSettings.displayPercentageSliderSteps,
+    valueLabel = "$displayPercentage%",
+    ...
+)
+```
+
+---
+
 ## ThemeSettingSwitch
 
 带开关的设置项；**点击整行**也会切换。
@@ -221,7 +265,6 @@ UiSettingsScreen(
 |------|------|
 | `UiModeSelector` | Miuix / Material |
 | `ColorModeSelector` | 颜色模式 |
-| `DisplayPercentageSlider` | 显示比例 85–130% |
 | `FollowSystemAccentSwitch` | 跟随系统动态色 |
 | `ThemeColorSelector` | 预设主题色（`ThemeSuperSpinner` + 色块图标） |
 

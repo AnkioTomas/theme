@@ -17,17 +17,12 @@ package net.ankio.theme.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material.icons.filled.Percent
 import androidx.compose.material.icons.filled.Style
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.Icon
@@ -42,8 +37,6 @@ import androidx.compose.ui.unit.dp
 import net.ankio.theme.AnkioTheme
 import net.ankio.theme.R
 import net.ankio.theme.ThemeSettings
-import net.ankio.theme.compat.ThemeCard
-import net.ankio.theme.compat.ThemeSlider
 import net.ankio.theme.compat.ThemeSuperDropdown
 import net.ankio.theme.compat.ThemeSuperSpinner
 import net.ankio.theme.compat.ThemeSwitch
@@ -119,84 +112,6 @@ internal fun ColorModeSelector(
         },
         position = position,
     )
-}
-
-/**
- * 显示比例滑块：拖动期间只更新本地状态（避免每帧写 SharedPreferences + 触发 recreate），
- * 拖动结束才写入 [ThemeSettings] 并通过 [onValueChangeFinished] 回调外部刷新。
- */
-@Composable
-internal fun DisplayPercentageSlider(
-    value: Int,
-    onValueChange: (Int) -> Unit,
-    onValueChangeFinished: () -> Unit,
-    position: SettingCardPosition = SettingCardPosition.Single,
-) {
-    val (topPad, bottomPad) = position.toVerticalPadding()
-    val min = ThemeSettings.MIN_DISPLAY_PERCENTAGE
-    val max = ThemeSettings.MAX_DISPLAY_PERCENTAGE
-    // 5% 一档：(130-85)/5 - 1 = 8 个中间点
-    val steps = ((max - min) / 5) - 1
-
-    ThemeCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = topPad, bottom = bottomPad),
-        shape = position.toShape(),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Box(
-                    modifier = Modifier.size(40.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Percent,
-                        contentDescription = null,
-                        tint = AnkioTheme.colorScheme.primary,
-                    )
-                }
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 8.dp),
-                ) {
-                    ThemeText(
-                        text = stringResource(R.string.theme_display_percentage),
-                        style = AnkioTheme.textStyles.title4,
-                        color = AnkioTheme.colorScheme.onSurface,
-                    )
-                    Spacer(Modifier.height(2.dp))
-                    ThemeText(
-                        text = stringResource(R.string.theme_display_percentage_summary),
-                        style = AnkioTheme.textStyles.footnote1,
-                        color = AnkioTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-                ThemeText(
-                    text = "$value%",
-                    style = AnkioTheme.textStyles.body2,
-                    color = AnkioTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            Spacer(Modifier.height(8.dp))
-            ThemeSlider(
-                value = value.toFloat(),
-                onValueChange = { onValueChange(it.toInt()) },
-                onValueChangeFinished = onValueChangeFinished,
-                valueRange = min.toFloat()..max.toFloat(),
-                steps = steps,
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
-    }
 }
 
 /** 动态颜色开关 */

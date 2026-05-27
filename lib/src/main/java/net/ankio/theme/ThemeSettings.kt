@@ -20,6 +20,8 @@ import android.content.SharedPreferences
 import android.content.res.Configuration
 import androidx.core.content.edit
 import com.google.android.material.color.DynamicColors
+import kotlin.math.roundToInt
+import kotlin.ranges.ClosedFloatingPointRange
 
 /** 与 AppCompatDelegate 夜模式常量一致，供 setDefaultNightMode 使用 */
 private const val MODE_NIGHT_NO = 1
@@ -46,6 +48,25 @@ object ThemeSettings {
     /** 显示比例允许范围。下限避免点击区域过小，上限避免布局坍塌。 */
     const val MIN_DISPLAY_PERCENTAGE = 85
     const val MAX_DISPLAY_PERCENTAGE = 130
+
+    /** 滑块步进（百分比点），与 [displayPercentageSliderSteps] 一致。 */
+    const val DISPLAY_PERCENTAGE_STEP = 5
+
+    /** [ThemeSettingSlider] 用的 valueRange。 */
+    val displayPercentageValueRange: ClosedFloatingPointRange<Float>
+        get() = MIN_DISPLAY_PERCENTAGE.toFloat()..MAX_DISPLAY_PERCENTAGE.toFloat()
+
+    /**
+     * Material Slider 的 steps：范围两端各一档，中间每 [DISPLAY_PERCENTAGE_STEP]% 一档。
+     * 85..130 步进 5 → 共 10 档 → steps = 8。
+     */
+    val displayPercentageSliderSteps: Int
+        get() = (MAX_DISPLAY_PERCENTAGE - MIN_DISPLAY_PERCENTAGE) / DISPLAY_PERCENTAGE_STEP - 1
+
+    /** 将滑块浮点值对齐到合法步进整数（如 87 → 85，88 → 90）。 */
+    fun snapDisplayPercentage(sliderValue: Float): Int =
+        ((sliderValue / DISPLAY_PERCENTAGE_STEP).roundToInt() * DISPLAY_PERCENTAGE_STEP)
+            .coerceIn(MIN_DISPLAY_PERCENTAGE, MAX_DISPLAY_PERCENTAGE)
 
     private lateinit var appContext: Context
     private lateinit var pref: SharedPreferences

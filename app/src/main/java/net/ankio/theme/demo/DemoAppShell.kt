@@ -157,12 +157,7 @@ private fun TitleAlignmentBar(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
     ) {
-        ThemeText(
-            text = "标题",
-            style = AnkioTheme.textStyles.footnote1,
-            color = AnkioTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.weight(1f, fill = false),
-        )
+
         ThemeButtonGroup {
             listOf(
                 ThemeTopAppBarTitleAlignment.Start to "居左",

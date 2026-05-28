@@ -6,8 +6,12 @@ package net.ankio.theme.demo
 
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -81,12 +85,18 @@ private fun NavGraphBuilder.demoDestination(
     }
 
     composable(DemoRoutes.Settings) {
-        UiSettingsScreen(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 8.dp),
-            onThemeChanged = onRecreateTheme,
-        )
+                .verticalScroll(rememberScrollState()),
+        ) {
+            UiSettingsScreen(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                onThemeChanged = onRecreateTheme,
+            )
+        }
     }
 
     composable(

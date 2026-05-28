@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.Percent
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -58,7 +59,6 @@ data class UiSettingsOptions(
  * 展示：UI 风格、颜色模式、跟随系统强调色、主题色选择。
  * 需在 [ThemeSettings.init] 后使用，配置由 theme 库直接管理。
  *
- * @param scrollEnabled 为 `false` 时不应用内部 [verticalScroll] / [fillMaxHeight]，
  *   供外层已提供滚动的页面嵌入使用。
  * @param onThemeChanged 主题变更后回调，如 setDefaultNightMode + activity.recreate()
  */
@@ -67,16 +67,13 @@ data class UiSettingsOptions(
 fun UiSettingsScreen(
     options: UiSettingsOptions = UiSettingsOptions(),
     modifier: Modifier = Modifier,
-    scrollEnabled: Boolean = true,
     onThemeChanged: () -> Unit = {},
 ) {
     var uiMode by remember { mutableStateOf(ThemeSettings.uiMode) }
-    var colorMode by remember { mutableStateOf(ThemeSettings.colorMode) }
+    var colorMode by remember { mutableIntStateOf(ThemeSettings.colorMode) }
     var followSystemAccent by remember { mutableStateOf(ThemeSettings.followSystemAccent) }
     var themeColor by remember { mutableStateOf(ThemeSettings.themeColor) }
     var displayPercentage by remember { mutableStateOf(ThemeSettings.displayPercentage) }
-
-    val scrollState = rememberScrollState()
 
     val uiModeEntries = options.uiModeEntries.takeIf { it.isNotEmpty() } ?: defaultUiModeEntries()
     val colorModeEntries = options.colorModeEntries.takeIf { it.isNotEmpty() } ?: defaultColorModeEntries()
@@ -91,13 +88,6 @@ fun UiSettingsScreen(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .then(
-                if (scrollEnabled) {
-                    Modifier.fillMaxHeight().verticalScroll(scrollState)
-                } else {
-                    Modifier
-                },
-            )
             .padding(16.dp),
     ) {
         SectionHeader(text = stringResource(R.string.theme_section_style))

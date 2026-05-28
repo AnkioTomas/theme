@@ -88,7 +88,6 @@ fun UiSettingsScreen(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
     ) {
         SectionHeader(text = stringResource(R.string.theme_section_style))
         UiModeSelector(

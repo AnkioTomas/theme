@@ -47,14 +47,14 @@ fun SettingCardPosition.toShape(): Shape = when (this) {
     SettingCardPosition.First -> RoundedCornerShape(
         topStart = 12.dp,
         topEnd = 12.dp,
-        bottomStart = 0.dp,
-        bottomEnd = 0.dp
+        bottomStart = 4.dp,
+        bottomEnd = 4.dp
     )
 
-    SettingCardPosition.Middle -> RoundedCornerShape(0.dp)
+    SettingCardPosition.Middle -> RoundedCornerShape(4.dp)
     SettingCardPosition.Last -> RoundedCornerShape(
-        topStart = 0.dp,
-        topEnd = 0.dp,
+        topStart = 4.dp,
+        topEnd = 4.dp,
         bottomStart = 12.dp,
         bottomEnd = 12.dp
     )
@@ -67,10 +67,10 @@ fun SettingCardPosition.toShape(): Shape = when (this) {
  * Single 上下都留 3dp。所有 Selector 共用此规则避免出现各自 hardcode padding。
  */
 fun SettingCardPosition.toVerticalPadding(): Pair<Dp, Dp> = when (this) {
-    SettingCardPosition.First -> 0.dp to 3.dp
-    SettingCardPosition.Middle -> 3.dp to 3.dp
-    SettingCardPosition.Last -> 3.dp to 0.dp
-    SettingCardPosition.Single -> 3.dp to 3.dp
+    SettingCardPosition.First -> 0.dp to 2.dp
+    SettingCardPosition.Middle -> 2.dp to 2.dp
+    SettingCardPosition.Last -> 2.dp to 0.dp
+    SettingCardPosition.Single -> 2.dp to 2.dp
 }
 
 /**

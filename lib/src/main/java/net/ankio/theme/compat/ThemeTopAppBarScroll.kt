@@ -11,7 +11,9 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import net.ankio.theme.LocalUiMode
 import net.ankio.theme.UiMode
 import top.yukonga.miuix.kmp.basic.MiuixScrollBehavior
@@ -25,20 +27,31 @@ enum class ThemeTopAppBarTitleAlignment {
 
 /**
  * 与 [ThemeTopAppBar] 配套的滚动折叠句柄。
- * 将 [nestedScrollConnection] 通过 [Modifier.nestedScroll] 挂到列表/滚动容器上，滚动时大标题会上移折叠。
+ *
+ * 用法：顶栏传 `scroll = scroll`；列表用 `Modifier.then(scroll.contentModifier)`。
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Stable
-class ThemeTopAppBarScroll internal constructor(
-    internal val material: TopAppBarScrollBehavior?,
-    internal val miuix: ScrollBehavior?,
-) {
-    val nestedScrollConnection: NestedScrollConnection
-        get() = material?.nestedScrollConnection
-            ?: miuix?.nestedScrollConnection
-            ?: error("ThemeTopAppBarScroll: no scroll behavior")
+sealed class ThemeTopAppBarScroll {
+    abstract val nestedScrollConnection: NestedScrollConnection
 
-    val isActive: Boolean = material != null || miuix != null
+    /** 挂到 LazyColumn / verticalScroll，与顶栏 [scrollBehavior] 联动折叠。 */
+    val contentModifier: Modifier
+        get() = Modifier.nestedScroll(nestedScrollConnection)
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    internal class Material(
+        internal val behavior: TopAppBarScrollBehavior,
+    ) : ThemeTopAppBarScroll() {
+        override val nestedScrollConnection: NestedScrollConnection
+            get() = behavior.nestedScrollConnection
+    }
+
+    internal class Miuix(
+        internal val behavior: ScrollBehavior,
+    ) : ThemeTopAppBarScroll() {
+        override val nestedScrollConnection: NestedScrollConnection
+            get() = behavior.nestedScrollConnection
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,18 +61,14 @@ fun rememberThemeTopAppBarScroll(collapseOnScroll: Boolean): ThemeTopAppBarScrol
     return when (LocalUiMode.current) {
         UiMode.Material -> {
             val state = rememberTopAppBarState()
-            ThemeTopAppBarScroll(
-                material = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(state),
-                miuix = null,
+            ThemeTopAppBarScroll.Material(
+                TopAppBarDefaults.exitUntilCollapsedScrollBehavior(state),
             )
         }
 
         UiMode.Miuix -> {
             val state = rememberMiuixTopAppBarState()
-            ThemeTopAppBarScroll(
-                material = null,
-                miuix = MiuixScrollBehavior(state),
-            )
+            ThemeTopAppBarScroll.Miuix(MiuixScrollBehavior(state))
         }
     }
 }

@@ -69,9 +69,21 @@ fun OverviewSection() {
         }
 
         ComponentSample(
+            name = "应用布局框架",
+            api = "ThemeApp { screen(...) }",
+            description = "列表页 lazyList()，表单页 scrollColumn { }。",
+        ) {
+            ThemeText(
+                text = "MainActivity 无 NavHost；LazyColumn 用 list = lazyList()",
+                style = AnkioTheme.textStyles.body2,
+                color = AnkioTheme.colorScheme.onSurface,
+            )
+        }
+
+        ComponentSample(
             name = "预测性返回",
-            api = "NavHost + enableOnBackInvokedCallback",
-            description = "Navigation Compose 返回栈；详情 pop 系统转场；根页 catalog 无拦截 → 返回主屏幕动画。",
+            api = "ThemeApp + enableOnBackInvokedCallback",
+            description = "框架内置 NavHost；detail 路由自动挂 ThemeNavTransitions；列表状态绑定 Nav 条目。",
         ) {
             ThemeText(
                 text = "遵循 Android 官方：OnBackPressedDispatcher / Nav 回栈，非手写位移",

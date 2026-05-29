@@ -1,5 +1,30 @@
 # 导航
 
+---
+
+## ThemeApp（推荐：整 App 壳）
+
+包名：`net.ankio.theme.layout`
+
+多 Tab + 子页 + 可折叠 TopBar + 预测性返回时，用 **`ThemeApp`** 一次接入，无需手写 `NavHost`。
+
+**完整说明（含 `lazyList` / `scrollColumn`、常见错误、Demo 对照）** → **[应用布局框架](../theme-app-layout.md)**
+
+```kotlin
+ThemeApp(start = "home", titleAlignment = align) {
+    screen("home", "首页", tab = Icons.Home to "首页") {
+        HomeList(list = lazyList())
+    }
+    screen("settings", "设置", tab = Icons.Settings to "设置", collapse = false) {
+        scrollColumn { SettingsBody() }
+    }
+}
+```
+
+---
+
+## ThemeTopAppBar（单页或自定义 Nav）
+
 包名：`net.ankio.theme.compat`
 
 ---
@@ -33,11 +58,8 @@ ThemeTopAppBar(
 
 ```kotlin
 val scroll = rememberThemeTopAppBarScroll(collapseOnScroll = true)
-    ?: return
 
-LazyColumn(
-    modifier = Modifier.nestedScroll(scroll.nestedScrollConnection),
-) { /* items */ }
+LazyColumn(Modifier.then(scroll.contentModifier)) { /* items */ }
 
 ThemeTopAppBar(..., scroll = scroll)
 ```
@@ -45,8 +67,9 @@ ThemeTopAppBar(..., scroll = scroll)
 | API | 说明 |
 |-----|------|
 | `rememberThemeTopAppBarScroll(true)` | `false` 时返回 `null` |
-| `ThemeTopAppBarScroll.nestedScrollConnection` | 挂到可滚动容器 |
-| `ThemeTopAppBarScroll.isActive` | 是否启用折叠 |
+| `ThemeTopAppBarScroll.contentModifier` | 挂到 LazyColumn / `verticalScroll` 根 Modifier |
+
+使用 **`ThemeApp`** 时，列表页用 `lazyList()`，表单页用 `scrollColumn { }`，一般不必手写 `contentModifier`。
 
 ### Miuix vs Material
 
@@ -56,16 +79,16 @@ ThemeTopAppBar(..., scroll = scroll)
 | 展开/收起标题 | `collapsedFraction > 0.5` 时用 `title`，否则 `largeTitle ?: title` | `largeTitle` 独立参数 |
 | 不可折叠 + 居中 | `CenterAlignedTopAppBar` | `MiuixSmallTopAppBar` |
 | 不可折叠 + 起始 | `TopAppBar` | `MiuixTopAppBar`（`largeTitle = null`） |
-| 状态栏 | 折叠时 `surface` → `surfaceContainer` 渐变（`snapshotFlow` 驱动） | 无同步（系统栏由 Activity 主题控制） |
+| 状态栏 | 透明状态栏 + 顶栏自绘（`enableEdgeToEdge`）；图标深浅由 `AutoTheme` 按夜模式设置 | 同左 |
 
-### Navigation Compose 集成（Demo）
+### Navigation Compose 集成
 
-| 要点 | 做法 |
-|------|------|
-| 子页标题 | **勿**用 `destination.route` 解析带参路由（模板为 `category/{categoryName}`）；用 `NavBackStackEntry.arguments` |
-| 列表滚动位置 | `rememberSaveable(backStackEntry, saver = LazyListState.Saver) { LazyListState() }` |
-| 折叠偏移重置 | `key(routeKey) { rememberThemeTopAppBarScroll(true) }`，避免子页沿用上一页折叠状态 |
-| 预测性返回 | `NavHost` 默认转场 + `popBackStack()`；Manifest `enableOnBackInvokedCallback` |
+| 要点 | ThemeApp 做法 | 手写 Nav 做法 |
+|------|---------------|---------------|
+| 子页标题 | `screen(..., title = { entry -> ... })` | 用 `arguments`，勿解析 `destination.route` 模板 |
+| 列表滚动 | `lazyList()` | `rememberNavDestinationLazyListState(entry)` |
+| 顶栏折叠 | 框架按 `screen` 的 `collapse` 处理 | `rememberThemeTopAppBarScroll` + `contentModifier` |
+| 预测性返回 | 内置 `NavHost` + `detail` 转场 | 见 [theme-app-layout.md](../theme-app-layout.md) |
 
 ---
 
@@ -167,4 +190,4 @@ Material `PrimaryTabRow` ↔ Miuix `MiuixTabRow`；文案过长时 Material 侧�
 
 ## Demo
 
-`app` → **顶部栏**、**标签栏**、**底部导航**、**侧边导航**；`DemoAppShell` 演示 TopBar + BottomNav
+`app` → **ThemeApp** 演示 TopBar + BottomNav + Nav；`gallery` 内仍有单独 **TopAppBar / TabRow / Rail** 组件示例

@@ -20,7 +20,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import net.ankio.theme.AnkioTheme
 import net.ankio.theme.compat.ThemeButtonGroup
@@ -72,12 +71,11 @@ fun TopAppBarSection() {
     SectionCard(title = "可折叠大标题") {
         var titleAlignment by remember { mutableStateOf(ThemeTopAppBarTitleAlignment.Center) }
         val scroll = rememberThemeTopAppBarScroll(collapseOnScroll = true)
-        val nested = scroll?.nestedScrollConnection?.let { Modifier.nestedScroll(it) } ?: Modifier
 
         ComponentSample(
             name = "滚动折叠",
-            api = "val scroll = rememberThemeTopAppBarScroll(true)\nThemeTopAppBar(..., scroll = scroll)\nLazyColumn(Modifier.nestedScroll(scroll!!.nestedScrollConnection))",
-            description = "列表上滑时大标题收起；需把 nestedScrollConnection 挂在滚动容器上。",
+            api = "val scroll = rememberThemeTopAppBarScroll(true)!!\nThemeTopAppBar(..., scroll = scroll)\nLazyColumn(Modifier.then(scroll.contentModifier))",
+            description = "列表上滑时大标题收起；列表需 `.then(scroll.contentModifier)`。",
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 ThemeTopAppBar(
@@ -113,7 +111,7 @@ fun TopAppBarSection() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp)
-                        .then(nested),
+                        .then(scroll!!.contentModifier),
                     contentPadding = PaddingValues(12.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {

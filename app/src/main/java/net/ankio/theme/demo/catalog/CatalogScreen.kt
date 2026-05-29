@@ -12,8 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import net.ankio.theme.layout.ThemeLazyListScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
@@ -28,16 +28,12 @@ import net.ankio.theme.demo.ui.DemoPageHeader
 
 @Composable
 fun CatalogScreen(
-    listState: LazyListState,
-    nestedScrollModifier: Modifier,
+    list: ThemeLazyListScroll,
     onOpenCategory: (DemoCategory) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     LazyColumn(
-        state = listState,
-        modifier = modifier
-            .fillMaxSize()
-            .then(nestedScrollModifier),
+        state = list.state,
+        modifier = list.modifier,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {

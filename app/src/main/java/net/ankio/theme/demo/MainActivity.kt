@@ -5,97 +5,101 @@
 package net.ankio.theme.demo
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Apps
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavBackStackEntry
+import net.ankio.theme.AnkioTheme
 import net.ankio.theme.BaseComposeActivity
+import net.ankio.theme.compat.ThemeIcon
+import net.ankio.theme.compat.ThemeIconButton
 import net.ankio.theme.compat.ThemeTopAppBarTitleAlignment
+import net.ankio.theme.demo.catalog.CatalogScreen
+import net.ankio.theme.demo.catalog.CategoryDetailScreen
 import net.ankio.theme.demo.catalog.DemoCategory
+import net.ankio.theme.layout.ThemeApp
+import net.ankio.theme.layout.ThemeScope
+import net.ankio.theme.layout.navArgs
+import net.ankio.theme.settings.UiSettingsScreen
+
+object DemoRoutes {
+    const val Catalog = "catalog"
+    const val Settings = "settings"
+    const val Category = "category/{categoryName}"
+
+    fun category(c: DemoCategory) = "category/${c.name}"
+}
+
+private fun NavBackStackEntry.category() =
+    arguments?.getString("categoryName")?.let { n -> DemoCategory.entries.find { it.name == n } }
+
+private fun ThemeScope.category() = entry.category()
 
 class MainActivity : BaseComposeActivity() {
 
     @Composable
     override fun Content() {
-        val navController = rememberNavController()
-        val backStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = backStackEntry?.destination?.route
+        var align by rememberSaveable { mutableStateOf(ThemeTopAppBarTitleAlignment.Center) }
 
-        var titleAlignment by rememberSaveable {
-            mutableStateOf(ThemeTopAppBarTitleAlignment.Center)
-        }
-
-        // 带参路由的 destination.route 是模板（category/{categoryName}），须从 arguments 取实参
-        val openCategory = backStackEntry?.arguments
-            ?.getString("categoryName")
-            ?.let { name -> DemoCategory.entries.find { it.name == name } }
-
-        val onTopLevelTab = openCategory == null &&
-            (currentRoute == DemoRoutes.Catalog || currentRoute == DemoRoutes.Settings)
-
-        val topTitle = when {
-            openCategory != null -> openCategory.title
-            currentRoute == DemoRoutes.Settings -> "主题设置"
-            else -> "Theme Demo"
-        }
-
-        val largeTitle = when {
-            openCategory != null -> openCategory.title
-            currentRoute == DemoRoutes.Settings -> "主题设置"
-            else -> "Theme 组件目录"
-        }
-
-        val showTitleAlignmentPicker = openCategory == null && currentRoute == DemoRoutes.Catalog
-        val collapseOnScroll = currentRoute == DemoRoutes.Catalog || openCategory != null
-        val topAppBarScrollKey = when {
-            openCategory != null -> "category:${openCategory.name}"
-            currentRoute == DemoRoutes.Settings -> DemoRoutes.Settings
-            else -> DemoRoutes.Catalog
-        }
-
-        DemoAppShell(
-            title = topTitle,
-            largeTitle = largeTitle,
-            topAppBarScrollKey = topAppBarScrollKey,
-            showBack = navController.previousBackStackEntry != null,
-            onBack = { navController.popBackStack() },
-            onRecreateTheme = ::recreateForThemeChange,
-            titleAlignment = titleAlignment,
-            onTitleAlignmentChange = if (showTitleAlignmentPicker) {
-                { titleAlignment = it }
-            } else {
-                null
-            },
-            collapseOnScroll = collapseOnScroll,
-            showBottomNavigation = onTopLevelTab,
-            selectedTab = when (currentRoute) {
-                DemoRoutes.Settings -> DemoBottomTab.Settings
-                else -> DemoBottomTab.Catalog
-            },
-            onTabSelected = { tab ->
-                val route = when (tab) {
-                    DemoBottomTab.Catalog -> DemoRoutes.Catalog
-                    DemoBottomTab.Settings -> DemoRoutes.Settings
-                }
-                navController.navigate(route) {
-                    popUpTo(navController.graph.startDestinationId) {
-                        saveState = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
+        ThemeApp(
+            start = DemoRoutes.Catalog,
+            titleAlignment = align,
+            actions = {
+                ThemeIconButton(onClick = ::recreateForThemeChange) {
+                    ThemeIcon(
+                        imageVector = Icons.Filled.Refresh,
+                        contentDescription = "应用主题",
+                        tint = AnkioTheme.colorScheme.onSurface,
+                    )
                 }
             },
-        ) { nestedScrollModifier ->
-            DemoNavHost(
-                navController = navController,
-                nestedScrollModifier = nestedScrollModifier,
-                onRecreateTheme = ::recreateForThemeChange,
-                modifier = Modifier.fillMaxSize(),
-            )
+            header = { route ->
+                if (route == DemoRoutes.Catalog) {
+                    DemoTitleAlignmentBar(
+                        value = align,
+                        onValueChange = { align = it },
+                    )
+                }
+            },
+        ) {
+            screen(
+                DemoRoutes.Catalog,
+                "Theme Demo",
+                "Theme 组件目录",
+                Icons.Filled.Apps to "组件",
+            ) {
+                CatalogScreen(
+                    list = lazyList(),
+                    onOpenCategory = { go(DemoRoutes.category(it)) },
+                )
+            }
+            screen(DemoRoutes.Settings, "主题设置", tab = Icons.Filled.Settings to "设置", collapse = false) {
+                scrollColumn {
+                    UiSettingsScreen(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                        onThemeChanged = ::recreateForThemeChange,
+                    )
+                }
+            }
+            screen(
+                route = DemoRoutes.Category,
+                title = { it.category()?.title.orEmpty() },
+                detail = true,
+                args = navArgs { string("categoryName") },
+            ) {
+                val c = category() ?: return@screen
+                CategoryDetailScreen(category = c, list = lazyList())
+            }
         }
     }
 }

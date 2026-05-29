@@ -9,6 +9,7 @@ theme/
 ├── lib/                         # JitPack 发布
 │   ├── src/main/.../theme/
 │   │   ├── compat/              # Theme* 组件（Miuix ↔ Material）
+│   │   ├── layout/              # ThemeApp、ThemeAppShell、Nav 辅助
 │   │   ├── settings/            # 设置页 + UiSettingsScreen
 │   │   ├── toast/               # ThemeToast
 │   │   ├── sheet/               # ThemeSheet、AnimatedSheetOverlay、OverlayWindow
@@ -58,7 +59,7 @@ Miuix Spinner / ListPopup 用 Window 变体，不依赖 `Scaffold`。
 |------|----------|-------|
 | 主题根 | `MaterialTheme` | `MiuixTheme` + Material 子树 |
 | 默认字色 Local | `MaterialTheme` 提供 | 需 `AutoTheme` 注入 `onSurface` |
-| TopAppBar 折叠 | `LargeTopAppBar` + statusBar 渐变 | `MiuixTopAppBar` + scrollBehavior |
+| TopAppBar 折叠 | `LargeTopAppBar` + scrollBehavior | `MiuixTopAppBar` + scrollBehavior |
 | TextField | Outlined / Filled | 单一 `MiuixTextField`，`style` 忽略 |
 | NumberPicker | 无 | 两栈均用 Miuix 控件 |
 | 下拉 | `Popup` + Menu | `WindowSpinner` |

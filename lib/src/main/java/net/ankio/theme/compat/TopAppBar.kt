@@ -23,19 +23,10 @@ import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.graphics.lerp
-import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.core.view.WindowCompat
 import net.ankio.theme.AnkioTheme
 import net.ankio.theme.LocalUiMode
 import net.ankio.theme.UiMode
@@ -74,12 +65,7 @@ fun ThemeTopAppBar(
 
     when (LocalUiMode.current) {
         UiMode.Material -> {
-            val materialScroll = scroll?.material
-            SyncMaterialStatusBar(
-                containerColor = colors.surface,
-                scrolledContainerColor = colors.surfaceContainer,
-                scrollBehavior = materialScroll,
-            )
+            val materialScroll = (scroll as? ThemeTopAppBarScroll.Material)?.behavior
             if (materialScroll != null) {
                 val expandedTitle = largeTitle ?: title
                 LargeTopAppBar(
@@ -118,7 +104,7 @@ fun ThemeTopAppBar(
 
         UiMode.Miuix -> {
             val resolvedLargeTitle = largeTitle ?: title
-            val miuixScroll = scroll?.miuix
+            val miuixScroll = (scroll as? ThemeTopAppBarScroll.Miuix)?.behavior
             if (miuixScroll != null) {
                 MiuixTopAppBar(
                     title = title,
@@ -149,48 +135,6 @@ fun ThemeTopAppBar(
                 )
             }
         }
-    }
-}
-
-/**
- * Material 顶栏与系统状态栏颜色同步（含 [LargeTopAppBar] 折叠渐变）。
- * 通过 [snapshotFlow] 监听滚动，避免仅 [SideEffect] 时折叠过程不触发重组。
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun SyncMaterialStatusBar(
-    containerColor: Color,
-    scrolledContainerColor: Color,
-    scrollBehavior: TopAppBarScrollBehavior?,
-) {
-    val view = LocalView.current
-    if (scrollBehavior != null) {
-        LaunchedEffect(scrollBehavior, containerColor, scrolledContainerColor, view) {
-            snapshotFlow { scrollBehavior.state.overlappedFraction }
-                .collect { fraction ->
-                    applyMaterialStatusBarColor(
-                        view = view,
-                        color = lerp(
-                            containerColor,
-                            scrolledContainerColor,
-                            fraction.coerceIn(0f, 1f),
-                        ),
-                    )
-                }
-        }
-    } else {
-        SideEffect {
-            applyMaterialStatusBarColor(view, containerColor)
-        }
-    }
-}
-
-private fun applyMaterialStatusBarColor(view: android.view.View, color: Color) {
-    runCatching {
-        val window = (view.context as android.app.Activity).window
-        window.statusBarColor = color.toArgb()
-        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
-            color.luminance() > 0.5f
     }
 }
 

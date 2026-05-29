@@ -83,7 +83,7 @@ class MainActivity : BaseComposeActivity() {
                     onOpenCategory = { go(DemoRoutes.category(it)) },
                 )
             }
-            screen(DemoRoutes.Settings, "主题设置", tab = Icons.Filled.Settings to "设置", collapse = false) {
+            screen(DemoRoutes.Settings, "主题设置", tab = Icons.Filled.Settings to "设置", collapse = true) {
                 scrollColumn {
                     UiSettingsScreen(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),

@@ -5,16 +5,17 @@
 
 package net.ankio.theme.layout
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -82,7 +83,8 @@ fun ThemeApp(
         topAppBarScrollKey = entry?.let { dest?.scrollKey?.invoke(it) ?: it.id },
         collapseOnScroll = dest?.collapseOnScroll ?: false,
         navigationIcon = {
-            if (nav.previousBackStackEntry != null) {
+            // Tab 根页（带 tab）不显示返回键；仅 detail / 无 tab 子页在可 pop 时显示
+            if (dest?.tab == null && nav.previousBackStackEntry != null) {
                 ThemeShellBackButton(onClick = { nav.popBackStack() })
             }
         },
@@ -158,12 +160,17 @@ class ThemeScope internal constructor(
      */
     @Composable
     fun scrollColumn(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-        Box(
+        val scrollState = rememberSaveable(entry.id, saver = ScrollState.Saver) {
+            ScrollState(0)
+        }
+        Column(
             modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .then(nestedScroll),
-        ) { content() }
+                .then(nestedScroll)
+                .verticalScroll(scrollState),
+        ) {
+            content()
+        }
     }
 }
 

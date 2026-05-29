@@ -104,7 +104,7 @@ fun ThemeApp(
 框架自动处理：
 
 - 创建 `NavController`、`NavHost`
-- 有上一级时显示返回键并 `popBackStack()`
+- 有上一级且当前页**无** `tab` 时显示返回键并 `popBackStack()`（Tab 根页不显示，避免 Tab 切换残留栈误判）
 - 根据当前 `screen` 配置更新标题、大标题、是否折叠 TopBar
 - 当前页带 `tab =` 时显示 BottomBar，子页（无 tab）隐藏 BottomBar
 - Tab 点击：`saveState` + `restoreState` + `launchSingleTop`

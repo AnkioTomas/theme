@@ -11,6 +11,7 @@ Compose 主题与组件库：**一套 `Theme*` API**，在 **Miuix KMP** 与 **M
 | 文档 | 说明 |
 |------|------|
 | [快速开始](getting-started.md) | JitPack 依赖、`ThemeSettings.init`、`BaseComposeActivity` |
+| [应用布局框架](layout.md) | **`ThemeApp`**：Nav、TopBar、BottomBar、滚动与预测性返回 |
 | [主题体系](theme-system.md) | `AutoTheme`、`AnkioTheme`、`ColorMode`、语义色、形状 |
 | [架构与设计](architecture.md) | 模块划分、设计原则、Miuix/Material 差异总表 |
 
@@ -54,6 +55,7 @@ Compose 主题与组件库：**一套 `Theme*` API**，在 **Miuix KMP** 与 **M
 | 包 | 内容 |
 |----|------|
 | `net.ankio.theme` | `AutoTheme`、`ThemeSettings`、`AnkioTheme`、`BaseComposeActivity` |
+| `net.ankio.theme.layout` | **`ThemeApp`**、滚动与 Nav 辅助 API |
 | `net.ankio.theme.compat` | 全部 `Theme*` 兼容组件 |
 | `net.ankio.theme.settings` | 设置列表原子组件、`UiSettingsScreen` |
 | `net.ankio.theme.toast` | `ThemeToast` |

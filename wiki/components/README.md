@@ -4,6 +4,8 @@
 
 所有组件通过 `when (LocalUiMode.current)` 在 Miuix 与 Material 间切换，**业务层不写分支**。
 
+多页 App 壳（Nav + TopBar + BottomBar）见 **[应用布局框架 ThemeApp](../layout.md)**（`net.ankio.theme.layout`）。
+
 ---
 
 ## 完整组件索引
@@ -35,6 +37,7 @@
 | `ThemeNumberPicker` | 表单 | [forms.md](forms.md#themenumberpicker) |
 | `ThemeSuperSpinner` | 表单 | [forms.md](forms.md#themesuperspinner) |
 | `ThemeSuperDropdown` | 表单 | [forms.md](forms.md#themesuperdropdown) |
+| `ThemeApp` | 布局 | [layout.md](../layout.md) |
 | `ThemeTopAppBar` | 导航 | [navigation.md](navigation.md#themetopappbar) |
 | `ThemeTopAppBarTitleAlignment` | 导航 | [navigation.md](navigation.md#themetopappbartitlealignment) |
 | `ThemeTopAppBarScroll` | 导航 | [navigation.md](navigation.md#滚动折叠) |

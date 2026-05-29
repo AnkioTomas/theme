@@ -234,13 +234,22 @@ ThemeSettingTextField(
 
 ## UiSettingsScreen
 
-内置完整主题设置页（UI 模式、颜色模式、显示比例、主题色等）。
+内置完整主题设置页（UI 模式、颜色模式、显示比例、主题色等）。**内部仅为 `Column`，不含滚动**；嵌入多页 App 时由外层提供滚动，见 [应用布局框架](layout.md#表单--设置页scrollcolumn)。
 
 ```kotlin
+// 在 ThemeApp 中
+screen("settings", "主题设置", collapse = false) {
+    scrollColumn {
+        UiSettingsScreen(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            onThemeChanged = { recreateForThemeChange() },
+        )
+    }
+}
+
+// 单页 / 外层已有 verticalScroll 时
 UiSettingsScreen(
-    options = UiSettingsOptions(),
-    modifier = Modifier.fillMaxSize(),
-    scrollEnabled = true,
+    modifier = Modifier.fillMaxWidth(),
     onThemeChanged = { recreateForThemeChange() },
 )
 ```
@@ -272,4 +281,4 @@ UiSettingsScreen(
 
 ## Demo
 
-`app` → **设置项组件**；主界面 **设置** Tab（完整 `UiSettingsScreen`）
+`app` → **设置项组件**；主界面 **设置** Tab（`ThemeApp` + `scrollColumn` + `UiSettingsScreen`）

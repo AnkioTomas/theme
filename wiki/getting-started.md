@@ -47,7 +47,7 @@ class MainActivity : BaseComposeActivity() {
 
 自动处理：Edge-to-Edge、夜模式、`AutoTheme`、`LocalUiMode`、根 `ThemeSurface`。
 
-预测性返回：Manifest 开启 `android:enableOnBackInvokedCallback="true"`，Compose 侧优先用 **Navigation Compose `NavHost`** 管理返回栈（见 Demo）；仅自定义转场时用 `PredictiveBackHandler`，简单拦截用 `BackHandler`。
+预测性返回：Manifest 开启 `android:enableOnBackInvokedCallback="true"`。多页应用推荐 **[ThemeApp](layout.md)** 统一管理 `NavHost` 与壳层；仅自定义转场时用 `PredictiveBackHandler`，简单拦截用 `BackHandler`。
 
 主题变更后：
 
@@ -124,6 +124,7 @@ ThemeSettings.getAppSettings()
 
 | 文档 | 内容 |
 |------|------|
+| [应用布局框架](layout.md) | `ThemeApp`、`lazyList` / `scrollColumn`、预测性返回 |
 | [主题体系](theme-system.md) | ColorMode、AnkioTheme、语义色 |
 | [组件完整索引](components/README.md) | 全部 Theme* API |
 | [设置页组件](settings-widgets.md) | SettingCard、UiSettingsScreen |

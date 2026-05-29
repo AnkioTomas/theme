@@ -8,7 +8,7 @@
 
 多 Tab + 子页 + 可折叠 TopBar + 预测性返回时，用 **`ThemeApp`** 一次接入，无需手写 `NavHost`。
 
-**完整说明（含 `lazyList` / `scrollColumn`、常见错误、Demo 对照）** → **[应用布局框架](../theme-app-layout.md)**
+**完整说明（含 `lazyList` / `scrollColumn`、常见错误、Demo 对照）** → **[应用布局框架](../layout.md)**
 
 ```kotlin
 ThemeApp(start = "home", titleAlignment = align) {
@@ -88,7 +88,7 @@ ThemeTopAppBar(..., scroll = scroll)
 | 子页标题 | `screen(..., title = { entry -> ... })` | 用 `arguments`，勿解析 `destination.route` 模板 |
 | 列表滚动 | `lazyList()` | `rememberNavDestinationLazyListState(entry)` |
 | 顶栏折叠 | 框架按 `screen` 的 `collapse` 处理 | `rememberThemeTopAppBarScroll` + `contentModifier` |
-| 预测性返回 | 内置 `NavHost` + `detail` 转场 | 见 [theme-app-layout.md](../theme-app-layout.md) |
+| 预测性返回 | 内置 `NavHost` + `detail` 转场 | 见 [layout.md](../layout.md) |
 
 ---
 

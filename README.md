@@ -13,6 +13,7 @@ Compose 主题与组件库：在 **Miuix KMP** 与 **Material 3** 之间提供�
 | 你想… | 从这里开始 |
 |--------|------------|
 | 接入项目 | [快速开始](wiki/getting-started.md) |
+| 多页 App 壳（Nav + TopBar + BottomBar） | [应用布局框架 ThemeApp](wiki/layout.md) |
 | 查某个 `Theme*` 组件 | [组件完整索引](wiki/components/README.md) |
 | 主题 / ColorMode / 语义色 | [主题体系](wiki/theme-system.md) |
 | 设置页、`UiSettingsScreen` | [设置页组件](wiki/settings-widgets.md) |

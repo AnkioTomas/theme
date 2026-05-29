@@ -4,29 +4,28 @@
 
 ## 预测性返回（Demo App）
 
-与 [Android 官方指南](https://developer.android.com/guide/navigation/custom-back/predictive-back-gesture) 一致：
+详见 **[应用布局框架](layout.md#预测性返回)**。Demo 要点：
 
 1. Manifest：`android:enableOnBackInvokedCallback="true"`
-2. **Navigation Compose** `NavHost` 管理 `catalog` / `settings` / `category/{name}` 返回栈
-3. 根目的地 `catalog` 无自定义 `BackHandler` → 系统「返回主屏幕」预测动画（Android 15+ 默认启用）
-4. 仅当需要**自定义**滑动进度动画时，才在局部使用 `PredictiveBackHandler`（Demo 未使用手写位移）
+2. **`ThemeApp`** 内部创建 `NavHost`，路由：`catalog` / `settings` / `category/{categoryName}`
+3. 根 Tab 无自定义 `BackHandler` → 系统返回桌面预测动画
+4. 详情页 `detail = true` → `ThemeNavTransitions` 水平转场
 
 | 场景 | 行为 |
 |------|------|
-| 分类详情 | `navController.popBackStack()` + Nav 默认 slide 转场 |
-| 设置 Tab | `navigate` + `saveState` / `restoreState` / `launchSingleTop` |
-| 组件目录 | 系统处理返回（无自定义 `BackHandler`） |
+| 分类详情 | 框架返回键 `popBackStack()` + 详情转场 |
+| Tab 切换 | `topLevelTab`（`saveState` / `restoreState`） |
+| 组件目录 | 系统处理返回 |
 
 ### 状态与顶栏（与代码一致）
 
 | 状态 | 实现 |
 |------|------|
-| 路由 | `catalog` · `settings` · `category/{categoryName}` |
-| 顶栏标题 | `arguments["categoryName"]` → `DemoCategory.title`；勿解析 `destination.route` 模板 |
-| 大标题折叠 | `DemoAppShell` + `rememberThemeTopAppBarScroll`；`nestedScroll` 挂到各页 `LazyColumn` |
-| 折叠重置 | `topAppBarScrollKey` 随目的地变化（`key` 包裹 scroll） |
-| 列表滚动 | `rememberSaveable(NavBackStackEntry, …)` 绑定返回栈条目 |
-| 标题对齐 | 仅 `catalog` 显示「居左 / 居中」；选中项 `Primary`、未选 `Secondary` 按钮 |
+| 壳层 | `ThemeApp` → `ThemeAppShell` + `NavHost` |
+| 顶栏标题 | 带参页 `title = { entry -> ... }`；勿解析 `destination.route` 模板 |
+| 列表滚动 | `lazyList()` → `ThemeLazyListScroll` |
+| 设置滚动 | `scrollColumn { UiSettingsScreen }`，`collapse = false` |
+| 标题对齐 | `header` 仅在 `route == catalog` 时显示 `DemoTitleAlignmentBar` |
 
 ---
 
@@ -119,15 +118,15 @@ lib/src/debug/.../preview/compat/ButtonPreview.kt
 
 ```text
 MainActivity
-└── DemoAppShell
-    ├── ThemeTopAppBar（catalog / 分类详情可折叠；settings 不折叠）
-    ├── TitleAlignmentBar（仅 catalog：居左 / 居中）
-    ├── DemoNavHost（NavHost）
-    │   ├── catalog → CatalogScreen
-    │   ├── settings → UiSettingsScreen
-    │   └── category/{categoryName} → CategoryDetailScreen
-    └── ThemeNavigationBar（分类详情页隐藏）
+└── ThemeApp(start = catalog)
+    ├── actions / header（TopBar 全局与按路由）
+    ├── screen catalog  → CatalogScreen(lazyList)
+    ├── screen settings → scrollColumn { UiSettingsScreen }
+    ├── screen category → CategoryDetailScreen(lazyList), detail = true
+    └── BottomBar（仅 catalog / settings Tab 时显示）
 ```
+
+完整 API 见 [layout.md](layout.md)。
 
 ### 组件目录（DemoCategory）
 

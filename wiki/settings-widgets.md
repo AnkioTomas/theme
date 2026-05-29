@@ -174,7 +174,7 @@ ThemeSettingDropdown(
 | 模式 | 行为 |
 |------|------|
 | `Text` | 普通文本 |
-| `Password` | 密码遮罩 + 密码键盘 |
+| `Password` | 密码遮罩 + 密码键盘 + 框内小眼睛切换显隐（可与 `fieldEndAction` 并存） |
 | `Number` | 数字键盘，过滤非数字字符 |
 | `Pattern(regex, invalidMessage?)` | 非空且整串不匹配 [regex] 时错误态；有 `invalidMessage` 时覆盖 `summary` 并以错误色显示 |
 
@@ -227,7 +227,7 @@ ThemeSettingTextField(
 | 参数 | 位置 |
 |------|------|
 | `inputMode` | 键盘类型、遮罩、数字过滤、正则校验 |
-| `fieldEndAction` | 输入框内部右侧（trailingIcon） |
+| `fieldEndAction` | 输入框内部右侧（trailingIcon）；Password 模式下在小眼睛左侧 |
 | `endAction` | 输入框**右侧**、仍在卡片内 |
 
 ---

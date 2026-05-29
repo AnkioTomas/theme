@@ -18,6 +18,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -97,12 +103,28 @@ internal fun SettingFilledTextField(
     maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
     trailingIcon: @Composable (() -> Unit)? = null,
 ) {
+    val isPassword = inputMode is SettingInputMode.Password
+    var passwordVisible by remember { mutableStateOf(false) }
     val isError = inputMode.isInputError(value)
     val supportingText = when {
         isError && inputMode is SettingInputMode.Pattern && inputMode.invalidMessage != null ->
             settingFieldSummary(inputMode.invalidMessage, isError = true)
 
         else -> settingFieldSummary(summary, isError = isError)
+    }
+    val resolvedTrailing: (@Composable () -> Unit)? = when {
+        isPassword -> {
+            {
+                SettingPasswordTrailing(
+                    fieldEndAction = trailingIcon,
+                    passwordVisible = passwordVisible,
+                    onToggleVisibility = { passwordVisible = !passwordVisible },
+                    enabled = enabled,
+                )
+            }
+        }
+
+        else -> trailingIcon
     }
     ThemeTextField(
         value = value,
@@ -112,16 +134,36 @@ internal fun SettingFilledTextField(
         label = title,
         placeholder = placeholder,
         leadingIcon = startAction,
-        trailingIcon = trailingIcon,
+        trailingIcon = resolvedTrailing,
         supportingText = supportingText,
         isError = isError,
-        visualTransformation = inputMode.toVisualTransformation(),
+        visualTransformation = inputMode.toVisualTransformation(passwordVisible),
         keyboardOptions = inputMode.toKeyboardOptions(),
         singleLine = singleLine,
         maxLines = maxLines,
         enabled = enabled,
         readOnly = readOnly,
     )
+}
+
+/** 密码框 trailing：自定义 [fieldEndAction] + 显隐切换。 */
+@Composable
+internal fun SettingPasswordTrailing(
+    fieldEndAction: @Composable (() -> Unit)?,
+    passwordVisible: Boolean,
+    onToggleVisibility: () -> Unit,
+    enabled: Boolean,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        fieldEndAction?.invoke()
+        ThemeIconButton(onClick = onToggleVisibility, enabled = enabled) {
+            Icon(
+                imageVector = if (passwordVisible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
+                contentDescription = if (passwordVisible) "隐藏密码" else "显示密码",
+                tint = AnkioTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
 }
 
 @Composable

@@ -163,7 +163,7 @@ fun SettingsWidgetsSection() {
         ComponentSample(
             name = "ThemeSettingTextField · 输入模式",
             api = "inputMode = Password | Number | Pattern(...)",
-            description = "密码遮罩、仅数字、正则校验（不匹配时错误态 + invalidMessage）。",
+            description = "Password 自带小眼睛显隐；Number 仅数字；Pattern 正则校验。",
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 ThemeSettingTextField(

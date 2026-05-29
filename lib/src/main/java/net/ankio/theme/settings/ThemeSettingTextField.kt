@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 
 /**
  * 设置项文本输入：图标与标题在输入框内部；[fieldEndAction] 框内、[endAction] 框右侧（均在卡片内）。
+ * [SettingInputMode.Password] 时自动在框内 trailing 增加小眼睛切换显隐，可与 [fieldEndAction] 并存。
  */
 @Composable
 fun ThemeSettingTextField(

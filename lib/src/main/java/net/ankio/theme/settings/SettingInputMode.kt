@@ -14,7 +14,7 @@ import androidx.compose.ui.text.input.VisualTransformation
  * 设置项文本输入模式。
  *
  * - [Text]：普通文本
- * - [Password]：密码遮罩 + 密码键盘
+ * - [Password]：密码遮罩 + 密码键盘；[SettingFilledTextField] 自带小眼睛切换显隐
  * - [Number]：数字键盘，仅保留数字字符
  * - [Pattern]：按 [regex] 校验；非空且不匹配时显示错误态，[invalidMessage] 可覆盖 [summary]
  */
@@ -50,7 +50,10 @@ internal fun SettingInputMode.toKeyboardOptions(): KeyboardOptions = when (this)
     else -> KeyboardOptions.Default
 }
 
-internal fun SettingInputMode.toVisualTransformation(): VisualTransformation = when (this) {
-    SettingInputMode.Password -> PasswordVisualTransformation()
-    else -> VisualTransformation.None
-}
+internal fun SettingInputMode.toVisualTransformation(passwordVisible: Boolean = false): VisualTransformation =
+    when (this) {
+        SettingInputMode.Password ->
+            if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation()
+
+        else -> VisualTransformation.None
+    }
